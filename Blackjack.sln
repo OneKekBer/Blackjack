@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blackjack.GameLogic", "Blackjack.GameLogic\Blackjack.GameLogic.csproj", "{730EBEB0-47A9-42DF-9DEF-36FCFE972E22}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blackjack.ConsoleApp", "Blackjack.ConsoleApp\Blackjack.ConsoleApp.csproj", "{739FAC13-40CE-40D7-A3A8-AFDC5321AF9D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blackjack.Business", "Blackjack.Business\Blackjack.Business.csproj", "{388E08AF-2A49-4AED-A4D2-30580F901D9B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blackjack.Data", "Blackjack.Data\Blackjack.Data.csproj", "{678BC3B5-9F4A-4FEA-9B18-2572CE4AD2B7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blackjack.Shared", "Blackjack.Shared\Blackjack.Shared.csproj", "{9D506676-4473-4913-A1F5-4DE637AF03A4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blackjack.Api", "Blackjack.Api\Blackjack.Api.csproj", "{D31DDC8A-10E9-423F-8047-3599ABF0E299}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{730EBEB0-47A9-42DF-9DEF-36FCFE972E22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{730EBEB0-47A9-42DF-9DEF-36FCFE972E22}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{730EBEB0-47A9-42DF-9DEF-36FCFE972E22}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{730EBEB0-47A9-42DF-9DEF-36FCFE972E22}.Release|Any CPU.Build.0 = Release|Any CPU
+		{739FAC13-40CE-40D7-A3A8-AFDC5321AF9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{739FAC13-40CE-40D7-A3A8-AFDC5321AF9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{739FAC13-40CE-40D7-A3A8-AFDC5321AF9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{739FAC13-40CE-40D7-A3A8-AFDC5321AF9D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{388E08AF-2A49-4AED-A4D2-30580F901D9B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{388E08AF-2A49-4AED-A4D2-30580F901D9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{388E08AF-2A49-4AED-A4D2-30580F901D9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{388E08AF-2A49-4AED-A4D2-30580F901D9B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{678BC3B5-9F4A-4FEA-9B18-2572CE4AD2B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{678BC3B5-9F4A-4FEA-9B18-2572CE4AD2B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{678BC3B5-9F4A-4FEA-9B18-2572CE4AD2B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{678BC3B5-9F4A-4FEA-9B18-2572CE4AD2B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9D506676-4473-4913-A1F5-4DE637AF03A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D506676-4473-4913-A1F5-4DE637AF03A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D506676-4473-4913-A1F5-4DE637AF03A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D506676-4473-4913-A1F5-4DE637AF03A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D31DDC8A-10E9-423F-8047-3599ABF0E299}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D31DDC8A-10E9-423F-8047-3599ABF0E299}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D31DDC8A-10E9-423F-8047-3599ABF0E299}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D31DDC8A-10E9-423F-8047-3599ABF0E299}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

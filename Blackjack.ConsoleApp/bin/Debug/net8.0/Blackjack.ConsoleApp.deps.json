@@ -1,0 +1,36 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "Blackjack.ConsoleApp/1.0.0": {
+        "dependencies": {
+          "Blackjack.Core": "1.0.0"
+        },
+        "runtime": {
+          "Blackjack.ConsoleApp.dll": {}
+        }
+      },
+      "Blackjack.Core/1.0.0": {
+        "runtime": {
+          "Blackjack.Core.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Blackjack.ConsoleApp/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Blackjack.Core/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
