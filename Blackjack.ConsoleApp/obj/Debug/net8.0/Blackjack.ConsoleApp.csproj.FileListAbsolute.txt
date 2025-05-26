@@ -3,8 +3,6 @@ C:\Users\Ilya\RiderProjects\Blackjack\Blackjack.ConsoleApp\bin\Debug\net8.0\Blac
 C:\Users\Ilya\RiderProjects\Blackjack\Blackjack.ConsoleApp\bin\Debug\net8.0\Blackjack.ConsoleApp.runtimeconfig.json
 C:\Users\Ilya\RiderProjects\Blackjack\Blackjack.ConsoleApp\bin\Debug\net8.0\Blackjack.ConsoleApp.dll
 C:\Users\Ilya\RiderProjects\Blackjack\Blackjack.ConsoleApp\bin\Debug\net8.0\Blackjack.ConsoleApp.pdb
-C:\Users\Ilya\RiderProjects\Blackjack\Blackjack.ConsoleApp\bin\Debug\net8.0\Blackjack.Core.dll
-C:\Users\Ilya\RiderProjects\Blackjack\Blackjack.ConsoleApp\bin\Debug\net8.0\Blackjack.Core.pdb
 C:\Users\Ilya\RiderProjects\Blackjack\Blackjack.ConsoleApp\obj\Debug\net8.0\Blackjack.ConsoleApp.csproj.AssemblyReference.cache
 C:\Users\Ilya\RiderProjects\Blackjack\Blackjack.ConsoleApp\obj\Debug\net8.0\Blackjack.ConsoleApp.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\Ilya\RiderProjects\Blackjack\Blackjack.ConsoleApp\obj\Debug\net8.0\Blackjack.ConsoleApp.AssemblyInfoInputs.cache
@@ -16,3 +14,6 @@ C:\Users\Ilya\RiderProjects\Blackjack\Blackjack.ConsoleApp\obj\Debug\net8.0\refi
 C:\Users\Ilya\RiderProjects\Blackjack\Blackjack.ConsoleApp\obj\Debug\net8.0\Blackjack.ConsoleApp.pdb
 C:\Users\Ilya\RiderProjects\Blackjack\Blackjack.ConsoleApp\obj\Debug\net8.0\Blackjack.ConsoleApp.genruntimeconfig.cache
 C:\Users\Ilya\RiderProjects\Blackjack\Blackjack.ConsoleApp\obj\Debug\net8.0\ref\Blackjack.ConsoleApp.dll
+C:\Users\Ilya\RiderProjects\Blackjack\Blackjack.ConsoleApp\bin\Debug\net8.0\Blackjack.GameLogic.dll
+C:\Users\Ilya\RiderProjects\Blackjack\Blackjack.ConsoleApp\bin\Debug\net8.0\Blackjack.GameLogic.pdb
+C:\Users\Ilya\RiderProjects\Blackjack\Blackjack.ConsoleApp\obj\Debug\net8.0\Blackjack.ConsoleApp.sourcelink.json

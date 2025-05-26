@@ -1,24 +1,28 @@
-using Blackjack.GameLogic.Factories;
-using Blackjack.Shared.Models;
+using Blackjack.GameLogic.Models;
+using Blackjack.GameLogic.Types;
 
 namespace Blackjack.GameLogic.Handlers;
 
-// i want one which will interact with deck, i think that deck cant to reset by itself
-public class DeckHandler
+// factory which will be creating new full decks
+public static class DeckHandler
 {
-    private readonly Deck _deck = new();
-    private readonly Random _random = new();
-    
-    public void ResetDeck()
+    public static List<Card> NewDeck()
     {
-        var newDeck = DeckFactory.NewDeck();
-        _deck.Reset(newDeck);
-    }
+        var deck = new List<Card>();
+        var suitValues = Enum.GetValues(typeof(Suits));
+        var rankValues = Enum.GetValues(typeof(Rank));
+        
+        foreach (var suit in suitValues)
+        {
+            Suits suitEnumVal = (Suits)Enum.Parse(typeof(Suits), suit.ToString());
 
-    public Card GetCard()
-    {
-        var randomIndex = _random.Next(_deck.GetLength());
-        var card = _deck.GetCardByIndex(randomIndex);
-        return card;
+            foreach (var rank in rankValues)
+            {
+                Rank rankEnumVal = (Rank)Enum.Parse(typeof(Rank), rank.ToString());
+                deck.Add(new Card(suitEnumVal, rankEnumVal));
+            }
+        }
+        
+        return deck; 
     }
 }

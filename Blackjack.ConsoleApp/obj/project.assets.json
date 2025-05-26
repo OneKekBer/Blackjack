@@ -5,24 +5,11 @@
       "Blackjack.GameLogic/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v8.0",
-        "dependencies": {
-          "Blackjack.Shared": "1.0.0"
-        },
         "compile": {
           "bin/placeholder/Blackjack.GameLogic.dll": {}
         },
         "runtime": {
           "bin/placeholder/Blackjack.GameLogic.dll": {}
-        }
-      },
-      "Blackjack.Shared/1.0.0": {
-        "type": "project",
-        "framework": ".NETCoreApp,Version=v8.0",
-        "compile": {
-          "bin/placeholder/Blackjack.Shared.dll": {}
-        },
-        "runtime": {
-          "bin/placeholder/Blackjack.Shared.dll": {}
         }
       }
     }
@@ -32,11 +19,6 @@
       "type": "project",
       "path": "../Blackjack.GameLogic/Blackjack.GameLogic.csproj",
       "msbuildProject": "../Blackjack.GameLogic/Blackjack.GameLogic.csproj"
-    },
-    "Blackjack.Shared/1.0.0": {
-      "type": "project",
-      "path": "../Blackjack.Shared/Blackjack.Shared.csproj",
-      "msbuildProject": "../Blackjack.Shared/Blackjack.Shared.csproj"
     }
   },
   "projectFileDependencyGroups": {

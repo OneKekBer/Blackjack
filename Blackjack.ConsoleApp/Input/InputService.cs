@@ -1,11 +1,11 @@
-using Blackjack.Shared.Interfaces;
-using Blackjack.Shared.Types;
+using Blackjack.GameLogic.Interfaces;
+using Blackjack.GameLogic.Types;
 
 namespace Blackjack.ConsoleApp.Input;
 
 public class InputService : IInputService
 {
-    public PlayerAction GetPlayerAction()
+    public PlayerAction GetPlayerAction(Guid playerId)
     {
         string? playerAction = default;
         Console.WriteLine("0 - Hit, 1 - Stand");
