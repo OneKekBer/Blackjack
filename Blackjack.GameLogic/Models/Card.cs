@@ -11,6 +11,5 @@ public class Card
     }
 
     public Suits Suits { get; init; }
-    
     public Rank Rank { get; init; }
 }

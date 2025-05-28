@@ -16,13 +16,13 @@ public class ConsoleApp
             );
         gameEngine.InitGame(new List<Player>() 
         {
-            new Player(Role.User, "WOW"),
-            new Player(Role.Bot, "BOT NUM1"),
-            new Player(Role.Bot, "BOT NUM2"),
-            new Player(Role.Bot, "BOT NUM3"),
-            new Player(Role.Bot, "BOT NUM4"),
-            new Player(Role.Bot, "BOT NUM5"),
-            new Player(Role.Bot, "BOT NUM6")
+            new Player(true,Role.User, "WOW"),
+            new Player(true,Role.Bot, "BOT NUM1"),
+            new Player(true,Role.Bot, "BOT NUM2"),
+            new Player(true,Role.Bot, "BOT NUM3"),
+            new Player(true,Role.Bot, "BOT NUM4"),
+            new Player(true, Role.Bot, "BOT NUM5"),
+            new Player(true, Role.Bot, "BOT NUM6")
         });
         gameEngine.Start();
     }

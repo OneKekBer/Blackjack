@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blackjack.Data", "Blackjack
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blackjack.Business", "Blackjack.Business\Blackjack.Business.csproj", "{753F53EA-D1A8-4493-860B-615EB2CF2000}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blackjack.UnitTests", "Blackjack.UnitTests\Blackjack.UnitTests.csproj", "{277DBBD4-CC7D-437F-B0D3-30BFE5306325}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{753F53EA-D1A8-4493-860B-615EB2CF2000}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{753F53EA-D1A8-4493-860B-615EB2CF2000}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{753F53EA-D1A8-4493-860B-615EB2CF2000}.Release|Any CPU.Build.0 = Release|Any CPU
+		{277DBBD4-CC7D-437F-B0D3-30BFE5306325}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{277DBBD4-CC7D-437F-B0D3-30BFE5306325}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{277DBBD4-CC7D-437F-B0D3-30BFE5306325}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{277DBBD4-CC7D-437F-B0D3-30BFE5306325}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -1,3 +1,3 @@
 namespace Blackjack.Presentation.Contracts.Requests;
 
-public record PlayerAuthRequest(Guid playerId);
+public record PlayerAuthRequest(Guid PlayerId);
