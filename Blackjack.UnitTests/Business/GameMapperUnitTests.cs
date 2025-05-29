@@ -19,16 +19,18 @@ public class GameMapperUnitTests
             Role.User,
             "Alice",
             1500,
+            "0-0 1-1",
+            "conn123"
+        );
+        
+        var gameEntity = new GameEntity(
+            Guid.NewGuid(),
+            new List<PlayerEntity> { playerEntity },
+            GameStatus.Started,
+            200,
+            1,
             "0-0 1-1"
         );
-
-        var gameEntity = new GameEntity(new List<PlayerEntity> { playerEntity })
-        {
-            Bet = 200,
-            CurrentPlayerIndex = 1,
-            Status = GameStatus.Started,
-            Deck = "0-0 1-1"
-        };
 
         // Act
         var game = GameMapper.EntityToModel(gameEntity);
@@ -48,27 +50,30 @@ public class GameMapperUnitTests
     {
         // Arrange
         var player = new Player(
-            isPlaying: true,
-            role: Role.User,
-            name: "Dealer",
-            balance: 1000,
             id: Guid.NewGuid(),
-            cards: new List<Card> { new Card(Suits.Diamond, Rank.Ten) }
-        );
+            name: "Dealer",
+            role: Role.User,
+            connectionId: "conn456"
+        )
+        {
+            IsPlaying = true,
+            Balance = 1000
+        };
+        player.Cards.Add(new Card(Suits.Diamond, Rank.Ten));
 
         var game = new Game(
             players: new List<Player> { player },
-            deck: new List<Card>
+            id: Guid.NewGuid()
+        )
+        {
+            Status = GameStatus.WaitingForPlayers,
+            Bet = 150,
+            CurrentPlayerIndex = 0,
+            Deck = new List<Card>
             {
                 new Card(Suits.Heart, Rank.Nine),
                 new Card(Suits.Spade, Rank.Jack)
-            },
-            id: Guid.NewGuid(),
-            status: GameStatus.WaitingForPlayers,
-            bet: 150
-        )
-        {
-            CurrentPlayerIndex = 0
+            }
         };
 
         // Act

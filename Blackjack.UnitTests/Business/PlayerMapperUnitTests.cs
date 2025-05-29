@@ -27,7 +27,8 @@ public class PlayerMapperUnitTests
             Role.User,
             "TestPlayer",
             1500,
-            cardString
+            cardString,
+            "conn123"
         );
 
         // Act
@@ -39,13 +40,14 @@ public class PlayerMapperUnitTests
         Assert.Equal(entity.Balance, model.Balance);
         Assert.Equal(entity.Role, model.Role);
         Assert.Equal(entity.IsPlaying, model.IsPlaying);
+        Assert.Equal(entity.ConnectionId, model.ConnectionId);
 
         var cards = model.Cards.ToList();
         Assert.Equal(2, cards.Count);
-        Assert.Equal(Suits.Club, cards[0].Suits);
-        Assert.Equal(Rank.Ace, cards[0].Rank);
-        Assert.Equal(Suits.Diamond, cards[1].Suits);
-        Assert.Equal(Rank.King, cards[1].Rank);
+        Assert.Equal(Suits.Club, cards[0].Suits);    // 0 => Club
+        Assert.Equal(Rank.Ace, cards[0].Rank);       // 0 => Ace
+        Assert.Equal(Suits.Diamond, cards[1].Suits); // 1 => Diamond
+        Assert.Equal(Rank.King, cards[1].Rank);      // 1 => King
     }
 
     [Fact]
@@ -53,17 +55,20 @@ public class PlayerMapperUnitTests
     {
         // Arrange
         var player = new Player(
-            isPlaying: true,
-            role: Role.User,
-            name: "John",
-            balance: 2000,
             id: Guid.NewGuid(),
-            cards: new List<Card>
-            {
-                new Card(Suits.Heart, Rank.Queen),
-                new Card(Suits.Spade, Rank.Seven)
-            }
-        );
+            name: "John",
+            role: Role.User,
+            connectionId: "conn987"
+        )
+        {
+            IsPlaying = true,
+            Balance = 2000
+        };
+        player.Cards.AddRange(new List<Card>
+        {
+            new Card(Suits.Heart, Rank.Queen),
+            new Card(Suits.Spade, Rank.Seven)
+        });
 
         // Act
         var entity = PlayerMapper.ModelToEntity(player);
@@ -74,9 +79,9 @@ public class PlayerMapperUnitTests
         Assert.Equal(player.Balance, entity.Balance);
         Assert.Equal(player.Role, entity.Role);
         Assert.Equal(player.IsPlaying, entity.IsPlaying);
-        
-        
+        Assert.Equal(player.ConnectionId, entity.ConnectionId);
+
         _testOutputHelper.WriteLine(entity.Cards);
-        Assert.Equal("2-2 3-7", entity.Cards);
+        Assert.Equal("2-2 3-7", entity.Cards); // 2-2 = Heart-Queen, 3-7 = Spade-Seven
     }
 }

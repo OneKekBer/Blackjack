@@ -16,13 +16,9 @@ public class ConsoleApp
             );
         gameEngine.InitGame(new List<Player>() 
         {
-            new Player(true,Role.User, "WOW"),
-            new Player(true,Role.Bot, "BOT NUM1"),
-            new Player(true,Role.Bot, "BOT NUM2"),
-            new Player(true,Role.Bot, "BOT NUM3"),
-            new Player(true,Role.Bot, "BOT NUM4"),
-            new Player(true, Role.Bot, "BOT NUM5"),
-            new Player(true, Role.Bot, "BOT NUM6")
+            new Player(Guid.NewGuid(),"WOW",Role.User,""),
+            new Player(Guid.NewGuid(), "BOT NUM1",Role.Bot, ""),
+
         });
         gameEngine.Start();
     }

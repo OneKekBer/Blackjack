@@ -6,39 +6,30 @@ namespace Blackjack.Business.Mappers;
 
 public static class GameMapper
 {
-    public static Game EntityToModel(GameEntity gameEntity)
+    public static Game EntityToModel(GameEntity entity)
     {
-        var players = gameEntity.Players
-            .Select(PlayerMapper.EntityToModel)
-            .ToList();
-
-        var deck = CardConverter.StringToCards(gameEntity.Deck).ToList();
-
-        return new Game(
-            players,
-            deck,
-            gameEntity.Id,
-            gameEntity.Status,
-            gameEntity.Bet
-        )
+        var players = entity.Players.Select(PlayerMapper.EntityToModel).ToList();
+        var game = new Game(players, entity.Id)
         {
-            CurrentPlayerIndex = gameEntity.CurrentPlayerIndex
+            Bet = entity.Bet,
+            Status = entity.Status,
+            CurrentPlayerIndex = entity.CurrentPlayerIndex,
+            Deck = CardConverter.StringToCards(entity.Deck).ToList()
         };
+
+        return game;
     }
 
     public static GameEntity ModelToEntity(Game game)
     {
-        var playerEntities = game.Players
-            .Select(PlayerMapper.ModelToEntity)
-            .ToList();
-
-        return new GameEntity(playerEntities)
-        {
-            Id = game.Id,
-            Status = game.Status,
-            Bet = game.Bet,
-            CurrentPlayerIndex = game.CurrentPlayerIndex,
-            Deck = CardConverter.CardToString(game.Deck)
-        };
+        var players = game.Players.Select(PlayerMapper.ModelToEntity).ToList();
+        return new GameEntity(
+            game.Id,
+            players,
+            game.Status,
+            game.Bet,
+            game.CurrentPlayerIndex,
+            CardConverter.CardToString(game.Deck)
+        );
     }
 }

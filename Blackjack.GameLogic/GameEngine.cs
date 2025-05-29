@@ -8,7 +8,7 @@ using Blackjack.GameLogic.Types;
 
 namespace Blackjack.GameLogic;
 
-public class GameEngine
+public class GameEngine : IGameEngine
 {
     private readonly IInputService _inputService;
     private readonly IOutputService _outputService;
@@ -19,12 +19,15 @@ public class GameEngine
     {
         _inputService = inputService;
         _outputService = outputService;
-        _game = new Game(null, DeckHandler.NewDeck()); // pozor
+        _game = new Game(new List<Player>(), Guid.NewGuid()); // pozor
     }
-
+    
     public void InitGame(List<Player> players)
     {
+        _game.CurrentPlayerIndex = 0;
         _game.Players = players;
+        _game.Deck = DeckHandler.NewDeck();
+        _game.Status = GameStatus.Started;
     }
     
     private void PlayRound()

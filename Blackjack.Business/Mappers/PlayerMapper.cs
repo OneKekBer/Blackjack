@@ -6,16 +6,21 @@ namespace Blackjack.Business.Mappers;
 
 public static class PlayerMapper
 {
-    public static Player EntityToModel(PlayerEntity gameEntity)
+    public static Player EntityToModel(PlayerEntity entity)
     {
-        return new Player(
-            gameEntity.IsPlaying, 
-            gameEntity.Role,
-            gameEntity.Name,
-            gameEntity.Balance,
-            gameEntity.Id,
-            CardConverter.StringToCards(gameEntity.Cards)
-            );
+        var player = new Player(
+            entity.Id,
+            entity.Name,
+            entity.Role,
+            entity.ConnectionId
+        )
+        {
+            IsPlaying = entity.IsPlaying,
+            Balance = entity.Balance
+        };
+
+        player.Cards.AddRange(CardConverter.StringToCards(entity.Cards));
+        return player;
     }
 
     public static PlayerEntity ModelToEntity(Player player)
@@ -26,7 +31,8 @@ public static class PlayerMapper
             player.Role,
             player.Name,
             player.Balance,
-            CardConverter.CardToString(player.Cards)
+            CardConverter.CardToString(player.Cards),
+            player.ConnectionId
         );
     }
 }

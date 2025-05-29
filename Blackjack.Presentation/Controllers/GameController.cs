@@ -6,9 +6,11 @@ namespace Blackjack.Presentation.Controllers;
 public class GameController : ControllerBase
 {
     [HttpGet]
-    public IActionResult Play()
+    public IActionResult Create()
     {
         
         return Ok();
     }
+    
+    
 }

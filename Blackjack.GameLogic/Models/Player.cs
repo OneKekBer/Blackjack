@@ -2,23 +2,14 @@ using Blackjack.GameLogic.Types;
 
 namespace Blackjack.GameLogic.Models;
 
-
-
 public class Player
 {
-    public Player(bool isPlaying,
-        Role role,
-        string name,
-        int balance = 1000,
-        Guid id = new Guid(),
-        List<Card> cards = null)
+    public Player(Guid id, string name, Role role, string connectionId)
     {
         Id = id;
-        IsPlaying = isPlaying;
         Role = role;
         Name = name;
-        Balance = balance;
-        Cards = cards;
+        ConnectionId = connectionId;
     }
 
     public Guid Id { get; }
@@ -26,5 +17,6 @@ public class Player
     public Role Role { get; }
     public string Name { get; }
     public int Balance { get; set; }
-    public List<Card> Cards { get; }
+    public List<Card> Cards { get; } = new List<Card>();
+    public string ConnectionId { get; set; }
 }
