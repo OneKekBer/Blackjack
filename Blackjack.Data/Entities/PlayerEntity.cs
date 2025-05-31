@@ -20,8 +20,7 @@ public class PlayerEntity : Entity
         Cards = cards;
         ConnectionId = connectionId;
     }
-
-    public Guid Id { get; } = Guid.NewGuid();
+    
     public bool IsPlaying { get; } = true; 
     public Role Role { get; }
     public string Name { get; }

@@ -17,6 +17,6 @@ public class Player
     public Role Role { get; }
     public string Name { get; }
     public int Balance { get; set; }
-    public List<Card> Cards { get; } = new List<Card>();
+    public List<Card> Cards { get; init; } = new List<Card>();
     public string ConnectionId { get; set; }
 }

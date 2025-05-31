@@ -9,4 +9,6 @@ public interface IGameRepository
     public Task<GameEntity> GetById(Guid id);
     
     public Task<IEnumerable<GameEntity>> GetAll();
+    
+    public Task Update(GameEntity entity);
 }

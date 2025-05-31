@@ -9,4 +9,6 @@ public interface IPlayerRepository
     public Task<PlayerEntity> GetById(Guid id);
     
     public Task DeleteById(Guid id);
+    
+    public Task Update(PlayerEntity entity);
 }

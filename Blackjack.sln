@@ -12,7 +12,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blackjack.Business", "Black
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blackjack.UnitTests", "Blackjack.UnitTests\Blackjack.UnitTests.csproj", "{277DBBD4-CC7D-437F-B0D3-30BFE5306325}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blackjack.IntegrationTests", "Blackjack.IntegrationTests\Blackjack.IntegrationTests.csproj", "{B3FE491E-CA64-4DF0-B4FF-9D8AA9A7B588}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blackjack.ServiceTests", "Blackjack.ServiceTests\Blackjack.ServiceTests.csproj", "{B3FE491E-CA64-4DF0-B4FF-9D8AA9A7B588}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

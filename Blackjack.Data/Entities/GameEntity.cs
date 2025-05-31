@@ -1,5 +1,4 @@
 using Blackjack.Data.Entities.Interfaces;
-using Blackjack.GameLogic.Models;
 using Blackjack.GameLogic.Types;
 
 namespace Blackjack.Data.Entities;
@@ -26,10 +25,10 @@ public class GameEntity : Entity
         CurrentPlayerIndex = currentPlayerIndex;
         Deck = deck;
     }
-
-    public List<PlayerEntity> Players { get; set; } = new List<PlayerEntity>();
+    
+    public List<PlayerEntity> Players { get; set; }
     public GameStatus Status { get; set; } = GameStatus.WaitingForPlayers;
     public int Bet { get; set; } = 100;
     public int CurrentPlayerIndex { get; set; } = 0;
-    public string Deck { get; set; }
+    public string Deck { get; set; } = "";
 }

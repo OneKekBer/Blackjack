@@ -43,6 +43,8 @@ public static class CardConverter
 
     public static List<Card> StringToCards(string cardsString)
     {
+        if (string.IsNullOrWhiteSpace(cardsString))
+            return new();
         return cardsString.Split(" ")
             .Select(StringToCard)
             .ToList();

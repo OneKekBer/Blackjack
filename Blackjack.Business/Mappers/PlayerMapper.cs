@@ -15,11 +15,10 @@ public static class PlayerMapper
             entity.ConnectionId
         )
         {
+            Cards = CardConverter.StringToCards(entity.Cards),
             IsPlaying = entity.IsPlaying,
             Balance = entity.Balance
         };
-
-        player.Cards.AddRange(CardConverter.StringToCards(entity.Cards));
         return player;
     }
 

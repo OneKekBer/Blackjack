@@ -31,9 +31,14 @@ public class GameRepository : IGameRepository
     public async Task<IEnumerable<GameEntity>> GetAll()
     {
         var games = await _databaseContext.Games
-            .AsNoTracking()
             .ToListAsync();
         
         return games;
+    }
+
+    public async Task Update(GameEntity entity)
+    {
+        _databaseContext.Games.Update(entity);
+        await _databaseContext.SaveChangesAsync();
     }
 }

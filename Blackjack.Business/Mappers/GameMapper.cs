@@ -19,6 +19,11 @@ public static class GameMapper
 
         return game;
     }
+    
+    public static List<Game> EntityToModel(IEnumerable<GameEntity> entity)
+    {
+        return entity.Select(EntityToModel).ToList();
+    }
 
     public static GameEntity ModelToEntity(Game game)
     {

@@ -23,8 +23,8 @@ public class PlayerRepository : IPlayerRepository
     public async Task<PlayerEntity> GetById(Guid id)
     {
         var entity = await _databaseContext.Players
-            .SingleAsync(p => p.Id == id);
-        
+            .SingleOrDefaultAsync(p => p.Id == id);
+
         return entity;
     }
 
@@ -33,6 +33,12 @@ public class PlayerRepository : IPlayerRepository
         var game = await GetById(id);
         
         _databaseContext.Players.Remove(game);
+        await _databaseContext.SaveChangesAsync();
+    }
+
+    public async Task Update(PlayerEntity entity)
+    {
+        _databaseContext.Players.Update(entity);
         await _databaseContext.SaveChangesAsync();
     }
 }
