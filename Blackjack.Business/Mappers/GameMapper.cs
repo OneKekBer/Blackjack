@@ -8,7 +8,7 @@ public static class GameMapper
 {
     public static Game EntityToModel(GameEntity entity)
     {
-        var players = entity.Players.Select(PlayerMapper.EntityToModel).ToList();
+        var players = entity.Players.Select(PlayerMapper.EntityToModel).ToList() ?? new List<Player>();
         var game = new Game(players, entity.Id)
         {
             Bet = entity.Bet,

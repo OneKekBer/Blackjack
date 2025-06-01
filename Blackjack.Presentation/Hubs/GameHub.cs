@@ -22,8 +22,8 @@ public class GameHub : Hub<IGameHubClient>, IGameHub
 
     public async Task JoinGame(JoinGameRequest request)
     {
-        await _gameHubService.JoinGame(request.PlayerId, request.GameId, Context.ConnectionId);
-        
-        
+        var game = await _gameHubService.JoinGame(request.PlayerId, request.GameId, Context.ConnectionId);
+
+        await Clients.Clients(game.Players.Select(p => p.ConnectionId)).SendGameState(game);
     }
 }

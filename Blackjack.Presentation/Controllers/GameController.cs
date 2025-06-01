@@ -1,5 +1,4 @@
 using Blackjack.Business.Services.Interfaces;
-using Blackjack.GameLogic.Models;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
@@ -31,7 +30,6 @@ public class GameController : ControllerBase
     {
         var games = _gameService.GetAll();
         _logger.LogInformation($"Returning {games.Result.Count()}");
-        return Ok();
+        return Ok(games);
     }
-    
 }

@@ -1,5 +1,4 @@
 using Blackjack.GameLogic;
-using Blackjack.GameLogic.Interfaces;
 using Blackjack.GameLogic.Models;
 using Blackjack.GameLogic.Types;
 using Blackjack.Presentation.Hubs.Interfaces;

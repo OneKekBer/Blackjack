@@ -25,8 +25,8 @@ public class GameEntity : Entity
         CurrentPlayerIndex = currentPlayerIndex;
         Deck = deck;
     }
-    
-    public List<PlayerEntity> Players { get; set; }
+
+    public List<PlayerEntity> Players { get; set; } = new List<PlayerEntity>();
     public GameStatus Status { get; set; } = GameStatus.WaitingForPlayers;
     public int Bet { get; set; } = 100;
     public int CurrentPlayerIndex { get; set; } = 0;

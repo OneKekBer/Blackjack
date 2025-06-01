@@ -1,6 +1,5 @@
 using Blackjack.Data.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 
 namespace Blackjack.Data.Context;
 

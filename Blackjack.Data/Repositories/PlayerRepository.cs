@@ -41,4 +41,15 @@ public class PlayerRepository : IPlayerRepository
         _databaseContext.Players.Update(entity);
         await _databaseContext.SaveChangesAsync();
     }
+
+    public async Task Save()
+    {
+        await _databaseContext.SaveChangesAsync();
+    }
+
+    public async Task<PlayerEntity> Attach(PlayerEntity entity)
+    {
+        var player = _databaseContext.Attach(entity);
+        return player.Entity;
+    }
 }

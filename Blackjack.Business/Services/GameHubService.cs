@@ -1,9 +1,7 @@
 using Blackjack.Business.Mappers;
 using Blackjack.Business.Services.Interfaces;
-using Blackjack.Data.Context;
 using Blackjack.Data.Repositories.Interfaces;
 using Blackjack.GameLogic.Models;
-using Blackjack.GameLogic.Types;
 
 namespace Blackjack.Business.Services;
 
@@ -21,17 +19,19 @@ public class GameHubService : IGameHubService
         _gameRepository = gameRepository;
     }
 
-    public async Task JoinGame(Guid playerId, Guid gameId, string connectionId)
+    public async Task<Game> JoinGame(Guid playerId, Guid gameId, string connectionId)
     {
         var validatedPlayer = await _playerService.GetValidatedPlayer(playerId, connectionId);
 
         var gameEntity = await _gameRepository.GetById(gameId);
         var isPlayerAlreadyInGame = gameEntity.Players
             .Exists(p => p.Id == playerId);
+
+        if (!isPlayerAlreadyInGame)
+        {
+            gameEntity.Players.Add(PlayerMapper.ModelToEntity(validatedPlayer));
+        }
         
-        if (isPlayerAlreadyInGame) return;
-        
-        gameEntity.Players.Add(PlayerMapper.ModelToEntity(validatedPlayer)); 
-        await _gameRepository.Update(gameEntity);
+        return GameMapper.EntityToModel(gameEntity);
     }
 }

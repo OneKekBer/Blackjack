@@ -44,6 +44,32 @@ public class GameMapperUnitTests
         Assert.Equal(CardConverter.StringToCards(gameEntity.Deck)[0].Rank, game.Deck[0].Rank);
         Assert.Equal(CardConverter.StringToCards(gameEntity.Deck)[0].Suits, game.Deck[0].Suits);
     }
+    
+    [Fact]
+    public void EntityToModel_WhenConvertGameEntityToModelPlayerIsEmpty_ConvertCorrectly()
+    {
+        // Arrange
+        var gameEntity = new GameEntity(
+            Guid.NewGuid(),
+            new List<PlayerEntity>(),
+            GameStatus.Started,
+            200,
+            1,
+            "0-0 1-1"
+        );
+
+        // Act
+        var game = GameMapper.EntityToModel(gameEntity);
+
+        // Assert
+        Assert.Equal(gameEntity.Bet, game.Bet);
+        Assert.Equal(gameEntity.CurrentPlayerIndex, game.CurrentPlayerIndex);
+        Assert.Equal(gameEntity.Status, game.Status);
+        Assert.Equal(gameEntity.Players.Count, game.Players.Count);
+        Assert.Equal(CardConverter.StringToCards(gameEntity.Deck).Count, game.Deck.Count);
+        Assert.Equal(CardConverter.StringToCards(gameEntity.Deck)[0].Rank, game.Deck[0].Rank);
+        Assert.Equal(CardConverter.StringToCards(gameEntity.Deck)[0].Suits, game.Deck[0].Suits);
+    }
 
     [Fact]
     public void ModelToEntity_WhenConvertGameModelToEntity_ConvertCorrectly()

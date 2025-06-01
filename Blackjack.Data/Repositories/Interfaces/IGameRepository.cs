@@ -11,4 +11,6 @@ public interface IGameRepository
     public Task<IEnumerable<GameEntity>> GetAll();
     
     public Task Update(GameEntity entity);
+    public Task Save();
+    public Task Attach(GameEntity entity);
 }

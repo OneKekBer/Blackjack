@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Blackjack.GameLogic")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ada7f36be485db5e3357f17d2c30464ed5c44346")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+06e7e04fc3faf09e377e2767467c9d552b3d3714")]
 [assembly: System.Reflection.AssemblyProductAttribute("Blackjack.GameLogic")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Blackjack.GameLogic")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

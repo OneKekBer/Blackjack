@@ -17,16 +17,19 @@ public class PlayerService : IPlayerService
     
     public async Task<Player> GetValidatedPlayer(Guid playerId, string connectionId)
     {
-        var player = await _playerRepository.GetById(playerId);
-        if (player is null)
+        var playerEntity = await _playerRepository.GetById(playerId);
+
+        if (playerEntity is null)
         {
-            var newPLayer = new Player(playerId, "", Role.User, connectionId); // fix this
-            await _playerRepository.Add(PlayerMapper.ModelToEntity(newPLayer));
-            return newPLayer;
+            var newPlayer = new Player(playerId, "", Role.User, connectionId);
+            var newEntity = PlayerMapper.ModelToEntity(newPlayer);
+            await _playerRepository.Add(newEntity);
+            return newPlayer;
         }
-        
-        player.ConnectionId = connectionId;
-        await _playerRepository.Update(player);
-        return PlayerMapper.EntityToModel(player);
+
+        playerEntity.ConnectionId = connectionId;
+        await _playerRepository.Save(); 
+        return PlayerMapper.EntityToModel(playerEntity);
     }
+
 }
