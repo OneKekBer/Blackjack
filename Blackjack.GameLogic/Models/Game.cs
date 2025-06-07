@@ -15,5 +15,5 @@ public class Game
     public List<Card> Deck { get; set; } = new List<Card>();
     public int CurrentPlayerIndex { get; set; } = 0;
     public GameStatus Status { get; set; } = GameStatus.WaitingForPlayers;
-    public int Bet { get; set; }
+    public int Bet { get; set; } = 100;
 }

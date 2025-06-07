@@ -12,7 +12,8 @@ public static class PlayerMapper
             entity.Id,
             entity.Name,
             entity.Role,
-            entity.ConnectionId
+            entity.ConnectionId,
+            entity.UserId
         )
         {
             Cards = CardConverter.StringToCards(entity.Cards),
@@ -31,7 +32,8 @@ public static class PlayerMapper
             player.Name,
             player.Balance,
             CardConverter.CardToString(player.Cards),
-            player.ConnectionId
+            player.ConnectionId,
+            player.UserId
         );
     }
 }

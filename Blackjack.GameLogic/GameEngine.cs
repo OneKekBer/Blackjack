@@ -12,19 +12,18 @@ public class GameEngine : IGameEngine
     private readonly IInputService _inputService;
     private readonly IOutputService _outputService;
     private readonly BotHandler _botHandler = new();
-    private readonly Game _game;
+    private Game _game;
     
     public GameEngine(IInputService inputService, IOutputService outputService)
     {
         _inputService = inputService;
         _outputService = outputService;
-        _game = new Game(new List<Player>(), Guid.NewGuid()); // pozor
     }
     
-    public void InitGame(List<Player> players)
+    public void InitGame(Game game)
     {
+        _game = game;
         _game.CurrentPlayerIndex = 0;
-        _game.Players = players;
         _game.Deck = DeckHandler.NewDeck();
         _game.Status = GameStatus.Started;
     }
@@ -43,7 +42,7 @@ public class GameEngine : IGameEngine
             
             var action = currentPlayer.Role == Role.Bot
                 ? _botHandler.Logic(currentPlayer.Cards.GetScore())
-                : _inputService.GetPlayerAction(currentPlayer.Id);
+                : _inputService.GetPlayerAction(_game.Id,currentPlayer.Id).Result;
 
             if (action is PlayerAction.Stand)
             {
@@ -53,7 +52,12 @@ public class GameEngine : IGameEngine
             
             currentPlayer.Cards.Add(GameHandler.GetCard(_game));
             
-            if (currentPlayer.Role != Role.Bot) _outputService.ShowPlayerHand(currentPlayer.Id, currentPlayer.Cards, currentPlayer.Cards.GetScore());
+            if (currentPlayer.Role != Role.Bot) 
+                _outputService.ShowPlayerHand(
+                    _game.Id,
+                    currentPlayer.Id,
+                    currentPlayer.Cards,
+                    currentPlayer.Cards.GetScore());
         }
     }
     
@@ -77,12 +81,12 @@ public class GameEngine : IGameEngine
             GameHandler.GivePrizes(_game, winnersIds);
 
             var message = GenerateResultMessage(winnersName);
-            _outputService.ShowResult(message, _game.Players);
+            _outputService.ShowResult(_game.Id, message, _game.Players);
             GameHandler.ResetGame(_game);
         }
     }
 
-    private string GenerateResultMessage(List<string> winnersName)
+    private string GenerateResultMessage(List<string> winnersName) // remove in other file
     {
         return winnersName.Count switch
         {

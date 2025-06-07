@@ -1,34 +1,55 @@
-using Blackjack.GameLogic;
+using Blackjack.Data.Interfaces;
+using Blackjack.Data.Repositories.Interfaces;
 using Blackjack.GameLogic.Models;
 using Blackjack.GameLogic.Types;
-using Blackjack.Presentation.Hubs.Interfaces;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Blackjack.Presentation.Hubs;
 
 public class GameHubDispatcher : IGameHubDispatcher
 {
-    private readonly GameEngine _gameEngine;
     private readonly IHubContext<GameHub> _hubContext;
+    private readonly IGameRepository _gameRepository;
+    private readonly Dictionary<Guid, TaskCompletionSource<PlayerAction>> _pendingActions = new();
     
-    public GameHubDispatcher(IHubContext<GameHub> hubContext)
+    public GameHubDispatcher(IHubContext<GameHub> hubContext, IGameRepository gameRepository)
     {
         _hubContext = hubContext;
-        _gameEngine = new GameEngine(this, this);
+        _gameRepository = gameRepository;
     }
     
-    public void ShowPlayerHand(Guid playerId, List<Card> cards, int score)
+    public async void ShowPlayerHand(Guid gameId, Guid playerId, List<Card> cards, int score) // maybe void is bad
     {
-        throw new NotImplementedException();
+        var game = await _gameRepository.GetById(gameId);
+        var connectionId = game.Players
+            .Single(p => p.Id == playerId).ConnectionId;
+        
+        await _hubContext.Clients.Client(connectionId).SendAsync("SendPlayerHand", playerId, cards);
+    }
+    
+    public async void ShowResult(Guid gameId,string message, IEnumerable<Player> players)
+    {
+        var connectionIds = players
+            .Select(p => p.ConnectionId);
+        
+        await _hubContext.Clients.Clients(connectionIds).SendAsync("SendResult", gameId, message);
     }
 
-    public void ShowResult(string message, IEnumerable<Player> players)
+    public async Task<PlayerAction> GetPlayerAction(Guid gameId, Guid playerId)
     {
-        throw new NotImplementedException();
+        var tcs = new TaskCompletionSource<PlayerAction>();
+        _pendingActions[playerId] = tcs;
+        var action = await tcs.Task;
+        
+        return action;
     }
 
-    public PlayerAction GetPlayerAction(Guid playerId)
+    public void SetPlayerAction(Guid playerId, PlayerAction action)
     {
-        throw new NotImplementedException();
+        if (_pendingActions.TryGetValue(playerId, out var tcs))
+        {
+            tcs.SetResult(action);
+            _pendingActions.Remove(playerId);
+        }
     }
 }

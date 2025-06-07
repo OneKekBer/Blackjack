@@ -1,9 +1,7 @@
 using Blackjack.Data.Context;
 using Blackjack.Data.Entities;
 using Blackjack.Data.Repositories.Interfaces;
-using Blackjack.GameLogic.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace Blackjack.Data.Repositories;
 
@@ -27,6 +25,7 @@ public class GameRepository : IGameRepository
     public async Task<GameEntity> GetById(Guid id)
     {
         var game = await _databaseContext.Games
+            .Include(g => g.Players)
             .SingleAsync(g => g.Id == id);
         
         return game;

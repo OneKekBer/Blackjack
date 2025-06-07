@@ -20,6 +20,7 @@ public class PlayerController : ControllerBase
     [HttpPost("authenticate")]
     public IActionResult Auth([FromBody] PlayerAuthRequest request)
     {
+        
         return Ok();
     }
 }

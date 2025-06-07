@@ -20,7 +20,8 @@ public class GameMapperUnitTests
             "Alice",
             1500,
             "0-0 1-1",
-            "conn123"
+            "conn123",
+            Guid.NewGuid()
         );
         
         var gameEntity = new GameEntity(
@@ -79,7 +80,8 @@ public class GameMapperUnitTests
             id: Guid.NewGuid(),
             name: "Dealer",
             role: Role.User,
-            connectionId: "conn456"
+            connectionId: "conn456",
+            Guid.NewGuid()
         )
         {
             IsPlaying = true,

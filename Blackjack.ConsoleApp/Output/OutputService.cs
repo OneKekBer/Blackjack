@@ -6,7 +6,7 @@ namespace Blackjack.ConsoleApp.Output;
 
 public class OutputService : IOutputService
 {
-    public void ShowPlayerHand(Guid playerId, List<Card> cards, int score)
+    public void ShowPlayerHand(Guid gameId,Guid playerId, List<Card> cards, int score)
     {
         Console.WriteLine("Your Hand:");
         foreach (var card in cards)
@@ -17,7 +17,7 @@ public class OutputService : IOutputService
         Console.WriteLine($"\nTotal Score: {score}");
     }
 
-    public void ShowResult(string message, IEnumerable<Player> players)
+    public void ShowResult(Guid gameId, string message, IEnumerable<Player> players)
     {
         Console.WriteLine(message);
 

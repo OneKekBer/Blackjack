@@ -4,5 +4,5 @@ namespace Blackjack.GameLogic.Interfaces;
 
 public interface IInputService
 {
-    public PlayerAction GetPlayerAction(Guid playerId); 
+    public Task<PlayerAction> GetPlayerAction(Guid gameId, Guid playerId); 
 }

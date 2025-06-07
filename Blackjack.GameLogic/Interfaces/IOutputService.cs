@@ -4,8 +4,8 @@ namespace Blackjack.GameLogic.Interfaces;
 
 public interface IOutputService
 { 
-    public void ShowPlayerHand(Guid playerId, List<Card> cards, int score);
+    public void ShowPlayerHand(Guid gameId, Guid playerId, List<Card> cards, int score);
     
-    public void ShowResult(string message, IEnumerable<Player> players);
+    public void ShowResult(Guid gameId, string message, IEnumerable<Player> players);
     
 }

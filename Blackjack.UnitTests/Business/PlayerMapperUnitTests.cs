@@ -28,7 +28,9 @@ public class PlayerMapperUnitTests
             "TestPlayer",
             1500,
             cardString,
-            "conn123"
+            "conn123",
+            Guid.NewGuid()
+
         );
 
         // Act
@@ -58,7 +60,9 @@ public class PlayerMapperUnitTests
             id: Guid.NewGuid(),
             name: "John",
             role: Role.User,
-            connectionId: "conn987"
+            connectionId: "conn987",
+            Guid.NewGuid()
+
         )
         {
             IsPlaying = true,
