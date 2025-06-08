@@ -2,7 +2,7 @@ using Blackjack.GameLogic.Extensions;
 using Blackjack.GameLogic.Interfaces;
 using Blackjack.GameLogic.Models;
 
-namespace Blackjack.ConsoleApp.Output;
+namespace Blackjack.ConsoleApp.Services;
 
 public class OutputService : IOutputService
 {

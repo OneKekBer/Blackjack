@@ -1,7 +1,7 @@
 using Blackjack.GameLogic.Interfaces;
 using Blackjack.GameLogic.Types;
 
-namespace Blackjack.ConsoleApp.Input;
+namespace Blackjack.ConsoleApp.Services;
 
 public class InputService : IInputService
 {

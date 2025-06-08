@@ -1,5 +1,6 @@
 using Blackjack.GameLogic.Extensions;
 using Blackjack.GameLogic.Handlers;
+using Blackjack.GameLogic.Helpers;
 using Blackjack.GameLogic.Interfaces;
 using Blackjack.GameLogic.Models;
 using Blackjack.GameLogic.Other.Exception;
@@ -10,14 +11,16 @@ namespace Blackjack.GameLogic;
 public class GameEngine : IGameEngine
 {
     private readonly IInputService _inputService;
+    private readonly IGamePersisterService _gamePersisterService;
     private readonly IOutputService _outputService;
     private readonly BotHandler _botHandler = new();
     private Game _game;
     
-    public GameEngine(IInputService inputService, IOutputService outputService)
+    public GameEngine(IInputService inputService, IOutputService outputService, IGamePersisterService gamePersisterService)
     {
         _inputService = inputService;
         _outputService = outputService;
+        _gamePersisterService = gamePersisterService;
     }
     
     public void InitGame(Game game)
@@ -30,7 +33,8 @@ public class GameEngine : IGameEngine
     
     private void PlayRound()
     {
-        var players = _game.Players ?? throw new NotInitializedPlayersException("Players in this game not yet initialized.");
+        var players = _game.Players 
+                      ?? throw new NotInitializedPlayersException("Players in this game not yet initialized.");
 
         for (int i = 0; i < players.Count; i++)
         {
@@ -58,6 +62,8 @@ public class GameEngine : IGameEngine
                     currentPlayer.Id,
                     currentPlayer.Cards,
                     currentPlayer.Cards.GetScore());
+            
+            _gamePersisterService.SaveGame(_game);
         }
     }
     
@@ -65,9 +71,10 @@ public class GameEngine : IGameEngine
     {
         while (true)
         {
+            //validate game on only bots/one player/mb smth else
             GameHandler.CheckPlayers(_game);
             if (_game.Players.Count == 1)
-                break;
+                break; // create handling mb output.BreakGame
             
             while (GameHandler.IsGameContinue(_game.Players))
                 PlayRound();
@@ -80,20 +87,12 @@ public class GameEngine : IGameEngine
         
             GameHandler.GivePrizes(_game, winnersIds);
 
-            var message = GenerateResultMessage(winnersName);
+            var message = MessagesGenerator.GenerateResultMessage(winnersName);
             _outputService.ShowResult(_game.Id, message, _game.Players);
             GameHandler.ResetGame(_game);
+            _gamePersisterService.SaveGame(_game);
         }
     }
 
-    private string GenerateResultMessage(List<string> winnersName) // remove in other file
-    {
-        return winnersName.Count switch
-        {
-            0 => "Nobody won the game.",
-            1 => $"{winnersName[0]} won the game.",
-            _ => $"{string.Join(", ", winnersName)} won the game."
-        };
-    }
 }
 

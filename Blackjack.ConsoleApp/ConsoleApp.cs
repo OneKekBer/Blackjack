@@ -1,5 +1,4 @@
-using Blackjack.ConsoleApp.Input;
-using Blackjack.ConsoleApp.Output;
+using Blackjack.ConsoleApp.Services;
 using Blackjack.GameLogic;
 using Blackjack.GameLogic.Models;
 using Blackjack.GameLogic.Types;
@@ -12,7 +11,8 @@ public class ConsoleApp
     {
         var gameEngine = new GameEngine(
             new InputService(),
-            new OutputService()
+            new OutputService(),
+            new GamePersisterService()
             );
         gameEngine.InitGame(new Game(new List<Player>() 
         {

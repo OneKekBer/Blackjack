@@ -52,4 +52,9 @@ public class GameHubDispatcher : IGameHubDispatcher
             _pendingActions.Remove(playerId);
         }
     }
+
+    public void SaveGame(Game game)
+    {
+        _gameRepository.Save();
+    }
 }

@@ -22,7 +22,7 @@ public class GameHubService : IGameHubService
         _playerService = playerService;
         _gameRepository = gameRepository;
         _gameHubDispatcher = gameHubDispatcher;
-        _gameEngine = new GameEngine(gameHubDispatcher, gameHubDispatcher);
+        _gameEngine = new GameEngine(gameHubDispatcher, gameHubDispatcher, gameHubDispatcher);
     }
 
     public async Task<Game> JoinGame(Guid userId, Guid gameId, string connectionId)
@@ -45,9 +45,14 @@ public class GameHubService : IGameHubService
         return GameMapper.EntityToModel(gameEntity);
     }
     
-    
     public async Task GetPlayerAction(Guid gameId, Guid playerId, PlayerAction action)
     {
+        var game = await _gameRepository.GetById(gameId);
+        if (game.Players[game.CurrentPlayerIndex].Id != playerId)
+        {
+            return;
+        }
+        
         _gameHubDispatcher.SetPlayerAction(playerId, action);
     }
     
