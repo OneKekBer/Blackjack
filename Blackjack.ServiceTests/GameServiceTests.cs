@@ -1,10 +1,4 @@
-using Blackjack.Business.Services;
-using Blackjack.Business.Services.Interfaces;
-using Blackjack.Data.Context;
-using Blackjack.Data.Repositories;
-using Blackjack.Data.Repositories.Interfaces;
 using Blackjack.ServiceTests.Mock;
-using Microsoft.EntityFrameworkCore;
 using Xunit;
 
 namespace Blackjack.ServiceTests;

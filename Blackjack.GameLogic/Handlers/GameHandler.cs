@@ -28,7 +28,7 @@ public static class GameHandler
         
         return maxScorePlayerIds;
     }
-
+    
     public static void ResetGame(Game game)
     {
         game.Players.ForEach(player =>

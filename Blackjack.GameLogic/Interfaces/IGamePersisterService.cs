@@ -4,5 +4,6 @@ namespace Blackjack.GameLogic.Interfaces;
 
 public interface IGamePersisterService
 {
-    public void SaveGame(Game game);
+    public Task SaveGame(Game game);
+    public Task SaveGameAndSendState(Game game);
 }

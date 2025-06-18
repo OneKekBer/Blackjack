@@ -19,16 +19,16 @@ public class GameController : ControllerBase
     }
 
     [HttpGet("create")]
-    public IActionResult Create()
+    public IActionResult Create(CancellationToken cancellationToken)
     {
-        _gameService.Create();
+        _gameService.Create(cancellationToken);
         return Ok();
     }
     
     [HttpGet("get-all")]
-    public IActionResult GetAll()
+    public IActionResult GetAll(CancellationToken cancellationToken)
     {
-        var games = _gameService.GetAll();
+        var games = _gameService.GetAll(cancellationToken);
         _logger.LogInformation($"Returning {games.Result.Count()}");
         return Ok(games);
     }

@@ -4,7 +4,7 @@ namespace Blackjack.Business.Services.Interfaces;
 
 public interface IGameService
 {
-    public Task Create();
+    public Task Create(CancellationToken cancellationToken = default);
     
-    Task<IEnumerable<Game>> GetAll();
+    Task<IEnumerable<Game>> GetAll(CancellationToken cancellationToken = default);
 }

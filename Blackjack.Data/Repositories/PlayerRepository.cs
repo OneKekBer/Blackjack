@@ -1,5 +1,6 @@
 using Blackjack.Data.Context;
 using Blackjack.Data.Entities;
+using Blackjack.Data.Other.Exceptions;
 using Blackjack.Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,42 +15,37 @@ public class PlayerRepository : IPlayerRepository
         _databaseContext = databaseContext;
     }
 
-    public async Task Add(PlayerEntity entity)
+    public async Task Add(PlayerEntity entity, CancellationToken cancellationToken = default)
     {
-        await _databaseContext.Players.AddAsync(entity);
-        await _databaseContext.SaveChangesAsync();
+        await _databaseContext.Players.AddAsync(entity, cancellationToken);
+        await _databaseContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<PlayerEntity> GetById(Guid id)
+    public async Task<PlayerEntity?> GetById(Guid id, CancellationToken cancellationToken = default)
     {
         var entity = await _databaseContext.Players
-            .SingleOrDefaultAsync(p => p.Id == id);
+            .SingleOrDefaultAsync(p => p.Id == id, cancellationToken);
 
         return entity;
     }
 
-    public async Task DeleteById(Guid id)
+    public async Task DeleteById(Guid id, CancellationToken cancellationToken = default)
     {
-        var game = await GetById(id);
+        var game = await GetById(id, cancellationToken) 
+                   ?? throw new NotFoundInDatabaseException($"game with id: {id} has not been found PlayerRepository.DeleteById");
         
         _databaseContext.Players.Remove(game);
-        await _databaseContext.SaveChangesAsync();
+        await _databaseContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task Update(PlayerEntity entity)
+    public async Task Update(PlayerEntity entity, CancellationToken cancellationToken = default)
     {
         _databaseContext.Players.Update(entity);
-        await _databaseContext.SaveChangesAsync();
+        await _databaseContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task Save()
+    public async Task Save(CancellationToken cancellationToken = default)
     {
-        await _databaseContext.SaveChangesAsync();
-    }
-
-    public async Task<PlayerEntity> Attach(PlayerEntity entity)
-    {
-        var player = _databaseContext.Attach(entity);
-        return player.Entity;
+        await _databaseContext.SaveChangesAsync(cancellationToken);
     }
 }

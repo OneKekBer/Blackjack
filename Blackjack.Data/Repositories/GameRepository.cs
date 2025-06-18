@@ -14,45 +14,37 @@ public class GameRepository : IGameRepository
         _databaseContext = databaseContext;
     }
     
-    public async Task Add(GameEntity entity)
+    public async Task Add(GameEntity entity, CancellationToken cancellationToken = default)
     {
-        Console.WriteLine(_databaseContext.Games.Count().ToString());
-        await _databaseContext.Games.AddAsync(entity);
-        Console.WriteLine(_databaseContext.Games.Count().ToString());
-        await _databaseContext.SaveChangesAsync();
+        await _databaseContext.Games.AddAsync(entity, cancellationToken);
+        await _databaseContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<GameEntity> GetById(Guid id)
+    public async Task<GameEntity> GetById(Guid id, CancellationToken cancellationToken = default)
     {
         var game = await _databaseContext.Games
             .Include(g => g.Players)
-            .SingleAsync(g => g.Id == id);
+            .SingleAsync(g => g.Id == id, cancellationToken);
         
         return game;
     }
 
-    public async Task<IEnumerable<GameEntity>> GetAll()
+    public async Task<IEnumerable<GameEntity>> GetAll(CancellationToken cancellationToken = default)
     {
         var games = await _databaseContext.Games
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
         
         return games;
     }
 
-    public async Task Update(GameEntity entity)
+    public async Task Update(GameEntity entity, CancellationToken cancellationToken = default)
     {
         _databaseContext.Games.Update(entity);
-        await _databaseContext.SaveChangesAsync();
+        await _databaseContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task Save()
+    public async Task Save(CancellationToken cancellationToken = default)
     {
-        await _databaseContext.SaveChangesAsync();
-    }
-
-    public async Task Attach(GameEntity entity)
-    {
-        _databaseContext.Attach(entity);
-        await _databaseContext.SaveChangesAsync();
+        await _databaseContext.SaveChangesAsync(cancellationToken);
     }
 }

@@ -14,15 +14,15 @@ public class GameService : IGameService
         _gameRepository = gameRepository;
     }
     
-    public async Task Create()
+    public async Task Create(CancellationToken cancellationToken = default)
     {   
         var game = new Game(new List<Player>(), Guid.NewGuid());
-        await _gameRepository.Add(GameMapper.ModelToEntity(game));
+        await _gameRepository.Add(GameMapper.ModelToEntity(game), cancellationToken);
     }
 
-    public async Task<IEnumerable<Game>> GetAll()
+    public async Task<IEnumerable<Game>> GetAll(CancellationToken cancellationToken = default)
     {
-        var games = await _gameRepository.GetAll();
+        var games = await _gameRepository.GetAll(cancellationToken);
         return GameMapper.EntityToModel(games);
     }
 }

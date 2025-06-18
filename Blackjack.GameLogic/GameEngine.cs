@@ -8,7 +8,7 @@ using Blackjack.GameLogic.Types;
 
 namespace Blackjack.GameLogic;
 
-public class GameEngine : IGameEngine
+public class GameEngine 
 {
     private readonly IInputService _inputService;
     private readonly IGamePersisterService _gamePersisterService;
@@ -31,14 +31,19 @@ public class GameEngine : IGameEngine
         _game.Status = GameStatus.Started;
     }
     
-    private void PlayRound()
+    private async Task PlayRound()
     {
         var players = _game.Players 
                       ?? throw new NotInitializedPlayersException("Players in this game not yet initialized.");
-
+        
         for (int i = 0; i < players.Count; i++)
-        {
+        {   
+            if (!GameHandler.IsGameContinue(_game.Players))
+                break;
+            //change player
             _game.CurrentPlayerIndex = i;
+            await _gamePersisterService.SaveGameAndSendState(_game);
+            
             var currentPlayer = players[i];
             
             if (currentPlayer.IsPlaying == false)
@@ -46,7 +51,7 @@ public class GameEngine : IGameEngine
             
             var action = currentPlayer.Role == Role.Bot
                 ? _botHandler.Logic(currentPlayer.Cards.GetScore())
-                : _inputService.GetPlayerAction(_game.Id,currentPlayer.Id).Result;
+                : await _inputService.GetPlayerAction(_game.Id,currentPlayer.Id); // maybe bad result
 
             if (action is PlayerAction.Stand)
             {
@@ -63,21 +68,21 @@ public class GameEngine : IGameEngine
                     currentPlayer.Cards,
                     currentPlayer.Cards.GetScore());
             
-            _gamePersisterService.SaveGame(_game);
+            await _gamePersisterService.SaveGame(_game);
         }
     }
     
-    public void Start()
+    public async Task Start()
     {
         while (true)
         {
             //validate game on only bots/one player/mb smth else
             GameHandler.CheckPlayers(_game);
-            if (_game.Players.Count == 1)
-                break; // create handling mb output.BreakGame
+            //if (_game.Players.Count == 1)
+            //    break; // create handling mb output.BreakGame
             
             while (GameHandler.IsGameContinue(_game.Players))
-                PlayRound();
+                await PlayRound();
         
             var winnersIds = GameHandler.GetWinnersId(_game);
             var winnersName = _game.Players
@@ -90,9 +95,8 @@ public class GameEngine : IGameEngine
             var message = MessagesGenerator.GenerateResultMessage(winnersName);
             _outputService.ShowResult(_game.Id, message, _game.Players);
             GameHandler.ResetGame(_game);
-            _gamePersisterService.SaveGame(_game);
+            await _gamePersisterService.SaveGameAndSendState(_game);
         }
     }
-
 }
 

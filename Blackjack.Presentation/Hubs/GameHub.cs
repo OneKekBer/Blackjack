@@ -22,8 +22,21 @@ public class GameHub : Hub<IGameHubClient>, IGameHub
     public async Task JoinGame(JoinGameRequest request)
     {
         _logger.LogInformation($"Joining game {request.GameId} {request.UserId}");
-        var game = await _gameHubService.JoinGame(request.UserId, request.GameId, Context.ConnectionId);
+        var isPlayerExists = await _gameHubService.IsPlayerExists(request.UserId, request.GameId);
+        var game = await _gameHubService.JoinGame(request.UserId, request.GameId, Context.ConnectionId, Context.ConnectionAborted);
 
+        if (game is null)
+        {
+            await Clients.Client(Context.ConnectionId).SendError($"There is no game with id:{request.GameId}");
+            return;
+        }
+        
+        if (isPlayerExists)
+        {
+            await Clients.Client(Context.ConnectionId).SendGameState(game);
+            return;
+        }
+        
         var connectionIds = game.Players
             .Where(p => !string.IsNullOrEmpty(p.ConnectionId))
             .Select(p => p.ConnectionId)
@@ -35,7 +48,7 @@ public class GameHub : Hub<IGameHubClient>, IGameHub
 
     public async Task StartGame(StartGameRequest request)
     {
-        var game = await _gameHubService.StartGame(request.GameId);
+        var game = await _gameHubService.StartGame(request.GameId, Context.ConnectionAborted);
         var connectionIds = game.Players
             .Where(p => !string.IsNullOrEmpty(p.ConnectionId))
             .Select(p => p.ConnectionId)
@@ -46,6 +59,25 @@ public class GameHub : Hub<IGameHubClient>, IGameHub
     
     public async Task GetPlayerAction(GetPlayerActionRequest request)
     {
-        await _gameHubService.GetPlayerAction(request.GameId, request.PlayerId, request.Action);
+        _logger.LogInformation("Player action");
+        await _gameHubService.GetPlayerAction(request.GameId, request.PlayerId, request.Action, Context.ConnectionAborted);
+    }
+
+    // public async Task Reconnect(ReconnectRequest request)
+    // {
+    //     var game = await _gameHubService.Reconnect(request.GameId, request.UserId, Context.ConnectionId, Context.ConnectionAborted);
+    //
+    //     if (game is null)
+    //     {
+    //         await Clients.Client(Context.ConnectionId).SendError($"Player with id {request.UserId} in game :{request.GameId} not found");
+    //         return;
+    //     }
+    //     
+    //     await Clients.Client(Context.ConnectionId).SendGameState(game);
+    // }
+    
+    public override async Task OnDisconnectedAsync(Exception? exception)
+    {
+        await base.OnDisconnectedAsync(exception);
     }
 }

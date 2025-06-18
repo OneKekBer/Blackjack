@@ -31,7 +31,7 @@ public class MockContext
         PlayerService = new PlayerService(PlayerRepository);
         GameService = new GameService(GameRepository);
         
-        GameHubDispatcher = new GameHubDispatcher(null, GameRepository);
+        GameHubDispatcher = new GameHubDispatcher(null, null);
 
         GameHubService = new GameHubService(PlayerRepository, PlayerService, GameRepository, GameHubDispatcher);
     }

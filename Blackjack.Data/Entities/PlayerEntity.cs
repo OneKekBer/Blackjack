@@ -24,7 +24,7 @@ public class PlayerEntity : Entity
     
     public bool IsPlaying { get; } = true; 
     public Role Role { get; }
-    public string Name { get; }
+    public string Name { get; set; }
     public int Balance { get; } = 1000;
     public string Cards { get; } = default!;
     public string ConnectionId { get; set; } = default!;

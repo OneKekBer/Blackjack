@@ -4,13 +4,12 @@ namespace Blackjack.Data.Repositories.Interfaces;
 
 public interface IPlayerRepository
 {
-    public Task Add(PlayerEntity entity);
+    public Task Add(PlayerEntity entity, CancellationToken cancellationToken = default);
     
-    public Task<PlayerEntity> GetById(Guid id);
+    public Task<PlayerEntity?> GetById(Guid id, CancellationToken cancellationToken = default);
     
-    public Task DeleteById(Guid id);
+    public Task DeleteById(Guid id, CancellationToken cancellationToken = default);
     
-    public Task Update(PlayerEntity entity);
-    public Task Save();
-    public Task<PlayerEntity> Attach(PlayerEntity entity);
+    public Task Update(PlayerEntity entity, CancellationToken cancellationToken = default);
+    public Task Save(CancellationToken cancellationToken = default);
 }

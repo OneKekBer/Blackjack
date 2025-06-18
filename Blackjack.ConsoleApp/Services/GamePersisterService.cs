@@ -5,7 +5,12 @@ namespace Blackjack.ConsoleApp.Services;
 
 public class GamePersisterService : IGamePersisterService
 {
-    public void SaveGame(Game game)
+    public async Task SaveGame(Game game)
+    {
+        return;
+    }
+
+    public async Task SaveGameAndSendState(Game game)
     {
         return;
     }
