@@ -1,5 +1,3 @@
-using Blackjack.GameLogic.Models;
-
 namespace Blackjack.Business.Services.Interfaces;
 
 public interface IPlayerService

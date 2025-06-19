@@ -8,16 +8,23 @@ public static class GameMapper
 {
     public static Game EntityToModel(GameEntity entity)
     {
-        var players = entity.Players.Select(PlayerMapper.EntityToModel).ToList() ?? new List<Player>();
+        var players = entity.Players.Select(PlayerMapper.EntityToModel).ToList();
         var game = new Game(players, entity.Id)
         {
             Bet = entity.Bet,
+            TurnQueue = new Queue<Guid>(entity.TurnQueue),
             Status = entity.Status,
-            CurrentPlayerIndex = entity.CurrentPlayerIndex,
             Deck = CardConverter.StringToCards(entity.Deck).ToList()
         };
 
         return game;
+    }
+
+    public static void CopyModelPropsToEntity(GameEntity entity, Game game)
+    {
+        entity.TurnQueue = game.TurnQueue.ToList();
+        entity.Status = game.Status;
+        entity.Deck = CardConverter.CardToString(game.Deck);
     }
     
     public static List<Game> EntityToModel(IEnumerable<GameEntity> entity)
@@ -33,8 +40,8 @@ public static class GameMapper
             players,
             game.Status,
             game.Bet,
-            game.CurrentPlayerIndex,
-            CardConverter.CardToString(game.Deck)
+            CardConverter.CardToString(game.Deck),
+            game.TurnQueue.ToList()
         );
     }
 }

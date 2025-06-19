@@ -4,6 +4,7 @@ using Blackjack.Data.Interfaces;
 using Blackjack.Data.Repositories.Interfaces;
 using Blackjack.GameLogic.Models;
 using Blackjack.GameLogic.Types;
+using Blackjack.Presentation.View;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Blackjack.Presentation.Hubs;
@@ -20,24 +21,48 @@ public class GameHubDispatcher : IGameHubDispatcher
         _hubContext = hubContext;
     }
     
-    public async void ShowPlayerHand(Guid gameId, Guid playerId, List<Card> cards, int score) // maybe void is bad
+    public async Task ShowPlayerHand(Guid gameId, Guid playerId, List<Card> cards, int score) // maybe delete this
     {
         using var scope = _scopeFactory.CreateScope();
         var gameRepository = scope.ServiceProvider.GetRequiredService<IGameRepository>();
         
-        var game = await gameRepository.GetById(gameId);
-        var connectionId = game.Players
+        var gameEntity = await gameRepository.GetById(gameId);
+        var connectionId = gameEntity.Players
             .Single(p => p.Id == playerId).ConnectionId;
         
-        await _hubContext.Clients.Client(connectionId).SendAsync("SendPlayerHand", playerId, cards);
+        await _hubContext.Clients.Client(connectionId).SendAsync("SendGameState", new GameView(GameMapper.EntityToModel(gameEntity)));
     }
     
-    public async void ShowResult(Guid gameId, string message, IEnumerable<Player> players)
+    public async Task ShowResult(Guid gameId, string message, IEnumerable<Player> players) // maybe delete this
     {
         var connectionIds = players
             .Select(p => p.ConnectionId);
         
         await _hubContext.Clients.Clients(connectionIds).SendAsync("SendResult", gameId, message);
+    }
+
+    public async Task ShowNewTurnPlayerId(Guid gameId, Guid currentPlayerId)
+    {
+        using var scope = _scopeFactory.CreateScope();
+        var gameRepository = scope.ServiceProvider.GetRequiredService<IGameRepository>();
+
+        var gameEntity = await gameRepository.GetById(gameId);
+        var connectionIds = gameEntity.Players
+            .Select(p => p.ConnectionId);
+        
+        await _hubContext.Clients.Clients(connectionIds).SendAsync("SendNewTurnId", gameId, currentPlayerId);
+    }
+
+    public async Task SendGameState(Game game)
+    {
+        using var scope = _scopeFactory.CreateScope();
+        var gameRepository = scope.ServiceProvider.GetRequiredService<IGameRepository>();
+        
+        var gameEntity = await gameRepository.GetById(game.Id);
+        var connectionIds = gameEntity.Players
+            .Select(p => p.ConnectionId);
+        
+        await _hubContext.Clients.Clients(connectionIds).SendAsync("SendGameState", new GameView(GameMapper.EntityToModel(gameEntity)));
     }
 
     public async Task<PlayerAction> GetPlayerAction(Guid gameId, Guid playerId)
@@ -61,10 +86,10 @@ public class GameHubDispatcher : IGameHubDispatcher
     public async Task SaveGame(Game game)
     {
         using var scope = _scopeFactory.CreateScope();
-        
         var gameRepository = scope.ServiceProvider.GetRequiredService<IGameRepository>();
-        await gameRepository.Save();
-        // await gameRepository.Update(GameMapper.ModelToEntity(game));
+
+        var gameEntity = GameMapper.ModelToEntity(game);
+        await gameRepository.Update(gameEntity);
     }
 
     public async Task SaveGameAndSendState(Game game)
@@ -77,6 +102,6 @@ public class GameHubDispatcher : IGameHubDispatcher
         var connectionIds = game.Players
             .Select(p => p.ConnectionId);
         
-        await _hubContext.Clients.Clients(connectionIds).SendAsync("SendGameState", game);  
+        await _hubContext.Clients.Clients(connectionIds).SendAsync("SendGameState", new GameView(game));  
     }
 }

@@ -3,7 +3,6 @@ using Blackjack.GameLogic.Handlers;
 using Blackjack.GameLogic.Helpers;
 using Blackjack.GameLogic.Interfaces;
 using Blackjack.GameLogic.Models;
-using Blackjack.GameLogic.Other.Exception;
 using Blackjack.GameLogic.Types;
 
 namespace Blackjack.GameLogic;
@@ -26,49 +25,61 @@ public class GameEngine
     public void InitGame(Game game)
     {
         _game = game;
-        _game.CurrentPlayerIndex = 0;
         _game.Deck = DeckHandler.NewDeck();
         _game.Status = GameStatus.Started;
+    
+        _game.TurnQueue = new Queue<Guid>(
+            _game.Players
+                .Where(p => p.IsPlaying)
+                .Select(p => p.Id)
+        );
+    }
+
+    private async Task<PlayerAction> GetPlayerAction(Player player)
+    {
+        return player.Role == Role.Bot
+            ? _botHandler.Logic(player.Cards.GetScore())
+            : await _inputService.GetPlayerAction(_game.Id, player.Id);
+    }
+    
+    private void HandlePlayerAction(Player player, PlayerAction action)
+    {
+        if (action == PlayerAction.Stand)
+        {
+            player.IsPlaying = false;
+            return;
+        }
+
+        player.Cards.Add(GameHandler.GetCard(_game));
+        
+        if (player.Role != Role.Bot)
+        {
+            _outputService.ShowPlayerHand(
+                _game.Id,
+                player.Id,
+                player.Cards,
+                player.Cards.GetScore());
+        }
     }
     
     private async Task PlayRound()
     {
-        var players = _game.Players 
-                      ?? throw new NotInitializedPlayersException("Players in this game not yet initialized.");
-        
-        for (int i = 0; i < players.Count; i++)
-        {   
-            if (!GameHandler.IsGameContinue(_game.Players))
-                break;
-            //change player
-            _game.CurrentPlayerIndex = i;
-            await _gamePersisterService.SaveGameAndSendState(_game);
-            
-            var currentPlayer = players[i];
-            
-            if (currentPlayer.IsPlaying == false)
+        while (_game.TurnQueue.Any() && GameHandler.IsGameContinue(_game.Players))
+        {
+            var currentPlayerId = _game.TurnQueue.Dequeue();
+            _game.TurnQueue.Enqueue(currentPlayerId);
+            var currentPlayer = _game.Players.SingleOrDefault(p => p.Id == currentPlayerId);
+                
+            if (currentPlayer == null || !currentPlayer.IsPlaying)
                 continue;
-            
-            var action = currentPlayer.Role == Role.Bot
-                ? _botHandler.Logic(currentPlayer.Cards.GetScore())
-                : await _inputService.GetPlayerAction(_game.Id,currentPlayer.Id); // maybe bad result
 
-            if (action is PlayerAction.Stand)
-            {
-                currentPlayer.IsPlaying = false;
-                continue;
-            }
+            await _outputService.ShowNewTurnPlayerId(_game.Id, currentPlayerId);
             
-            currentPlayer.Cards.Add(GameHandler.GetCard(_game));
+            var action = await GetPlayerAction(currentPlayer);
+            HandlePlayerAction(currentPlayer, action);
             
-            if (currentPlayer.Role != Role.Bot) 
-                _outputService.ShowPlayerHand(
-                    _game.Id,
-                    currentPlayer.Id,
-                    currentPlayer.Cards,
-                    currentPlayer.Cards.GetScore());
-            
-            await _gamePersisterService.SaveGame(_game);
+            await _outputService.SendGameState(_game);
+            await _gamePersisterService.SaveGame(_game); // i dont sure how correctly this method SAVE game
         }
     }
     
@@ -81,8 +92,7 @@ public class GameEngine
             //if (_game.Players.Count == 1)
             //    break; // create handling mb output.BreakGame
             
-            while (GameHandler.IsGameContinue(_game.Players))
-                await PlayRound();
+            await PlayRound();
         
             var winnersIds = GameHandler.GetWinnersId(_game);
             var winnersName = _game.Players
@@ -93,9 +103,12 @@ public class GameEngine
             GameHandler.GivePrizes(_game, winnersIds);
 
             var message = MessagesGenerator.GenerateResultMessage(winnersName);
-            _outputService.ShowResult(_game.Id, message, _game.Players);
+            await _outputService.ShowResult(_game.Id, message, _game.Players);
+            
             GameHandler.ResetGame(_game);
-            await _gamePersisterService.SaveGameAndSendState(_game);
+            
+            await _gamePersisterService.SaveGame(_game);
+            await _outputService.SendGameState(_game);
         }
     }
 }

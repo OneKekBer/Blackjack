@@ -10,6 +10,7 @@ public class Game
         Id = id;
     }
  
+    public Queue<Guid> TurnQueue { get; set; } = new Queue<Guid>(); 
     public Guid Id { get; set; }
     public List<Player> Players { get; set; } // with db i need to change on userId`s
     public List<Card> Deck { get; set; } = new List<Card>();

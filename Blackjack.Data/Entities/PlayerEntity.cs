@@ -29,4 +29,5 @@ public class PlayerEntity : Entity
     public string Cards { get; } = default!;
     public string ConnectionId { get; set; } = default!;
     public Guid? UserId { get; set; }
+    
 }

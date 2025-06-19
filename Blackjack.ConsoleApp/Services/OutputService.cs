@@ -6,7 +6,7 @@ namespace Blackjack.ConsoleApp.Services;
 
 public class OutputService : IOutputService
 {
-    public void ShowPlayerHand(Guid gameId,Guid playerId, List<Card> cards, int score)
+    public Task ShowPlayerHand(Guid gameId,Guid playerId, List<Card> cards, int score)
     {
         Console.WriteLine("Your Hand:");
         foreach (var card in cards)
@@ -15,9 +15,10 @@ public class OutputService : IOutputService
         }
         
         Console.WriteLine($"\nTotal Score: {score}");
+        return Task.CompletedTask;
     }
 
-    public void ShowResult(Guid gameId, string message, IEnumerable<Player> players)
+    public Task ShowResult(Guid gameId, string message, IEnumerable<Player> players)
     {
         Console.WriteLine(message);
 
@@ -28,5 +29,16 @@ public class OutputService : IOutputService
         }
 
         Console.WriteLine();
+        return Task.CompletedTask;
+    }
+
+    public Task ShowNewTurnPlayerId(Guid gameId, Guid currentPlayerId)
+    {
+        return Task.CompletedTask;
+    }
+
+    public Task SendGameState(Game game)
+    {
+        return Task.CompletedTask;
     }
 }

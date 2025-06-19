@@ -52,8 +52,7 @@ public class GameHubService : IGameHubService
                 existingPlayer.ConnectionId = connectionId;
                 await _gameRepository.Save(cancellationToken);
             }
-
-
+            
             return GameMapper.EntityToModel(gameEntity);
         }
         finally
@@ -74,13 +73,15 @@ public class GameHubService : IGameHubService
 
     public async Task GetPlayerAction(Guid gameId, Guid playerId, PlayerAction action, CancellationToken cancellationToken)
     {
-        var game = await _gameRepository.GetById(gameId, cancellationToken) 
+        var gameEntity = await _gameRepository.GetById(gameId, cancellationToken) 
                    ?? throw new NotFoundInDatabaseException($"In getting player action in game with id: {gameId} has not been found");
         
-        if (game.Players[game.CurrentPlayerIndex].Id != playerId)
+        Console.WriteLine($"TurnQueue GetPlayerAction: {string.Join(", ", gameEntity.TurnQueue)}");
+
+        /*if (gameEntity.TurnQueue.Last() != playerId)
         {
             return;
-        }
+        }*/
         
         _gameHubDispatcher.SetPlayerAction(playerId, action);
     }
@@ -91,9 +92,12 @@ public class GameHubService : IGameHubService
                          ?? throw new NotFoundInDatabaseException($"In starting game with id: {gameId} has not been found");
         
         var game = GameMapper.EntityToModel(gameEntity);
-        
         _gameEngine.InitGame(game);
-       
+        
+        GameMapper.CopyModelPropsToEntity(gameEntity, game);
+        
+        await _gameRepository.Save(cancellationToken);
+        
         _gameEngine.Start();
         
         await _gameRepository.Save(cancellationToken);

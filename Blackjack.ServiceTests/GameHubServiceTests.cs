@@ -1,4 +1,5 @@
 using Blackjack.Business.Mappers;
+using Blackjack.GameLogic;
 using Blackjack.GameLogic.Models;
 using Blackjack.GameLogic.Types;
 using Blackjack.ServiceTests.Mock;
@@ -98,6 +99,36 @@ public class GameHubServiceTests : IClassFixture<MockContext>
             var player = gameEntity.Players.First(p => p.UserId == userIds[i]);
             Assert.Equal(connectionIds[i], player.ConnectionId);
         }
+    }
+    
+    [Fact]
+    public async Task StartGame_WhenGameStarted_GameStateIsUpdated()
+    {
+        await _mockContext.DatabaseContext.Database.EnsureDeletedAsync();
+        await _mockContext.DatabaseContext.Database.EnsureCreatedAsync();
+     
+        //arrange
+        var p1 = new Player(Guid.NewGuid(), "A", Role.User, "", null);
+        var p2 = new Player(Guid.NewGuid(), "B", Role.User, "", null);
+        var gameId = Guid.NewGuid();
+        var gameToDatabase = new Game([p1, p2], gameId);
+        var gameEngine = new GameEngine(null, null, null);
+        
+        //Act
+        await _mockContext.GameRepository.Add(GameMapper.ModelToEntity(gameToDatabase));
+        _mockContext.DatabaseContext.ChangeTracker.Clear();
+
+        var gameEntity = await _mockContext.GameRepository.GetByIdAsNoTracking(gameId);
+        var game = GameMapper.EntityToModel(gameEntity!);
+        
+        gameEngine.InitGame(game);
+        await _mockContext.GameRepository.Update(GameMapper.ModelToEntity(game)!, CancellationToken.None);
+        await _mockContext.GameRepository.Save();
+        
+        var gameEntityFromDatabase = await _mockContext.GameRepository.GetById(gameId);
+        
+        //Assert
+        Assert.Equal(2, gameEntityFromDatabase!.TurnQueue.Count);
     }
 
     /*[Fact]

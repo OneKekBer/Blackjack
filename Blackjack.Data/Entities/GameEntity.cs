@@ -10,25 +10,27 @@ public class GameEntity : Entity
         
     }
 
-    public GameEntity(
+    public GameEntity
+    (
         Guid id,
         List<PlayerEntity> players,
         GameStatus status,
         int bet,
-        int currentPlayerIndex,
-        string deck)
+        string deck,
+        List<Guid> turnQueue
+        )
     {
         Id = id;
         Players = players;
         Status = status;
         Bet = bet;
-        CurrentPlayerIndex = currentPlayerIndex;
         Deck = deck;
+        TurnQueue = turnQueue;
     }
 
-    public List<PlayerEntity> Players { get; set; } = new List<PlayerEntity>();
+    public List<Guid> TurnQueue { get; set; } = new List<Guid>();
+    public List<PlayerEntity> Players { get; } = new List<PlayerEntity>();
     public GameStatus Status { get; set; } = GameStatus.WaitingForPlayers;
-    public int Bet { get; set; } = 100;
-    public int CurrentPlayerIndex { get; set; } = 0;
+    public int Bet { get; } = 100;
     public string Deck { get; set; } = "";
 }

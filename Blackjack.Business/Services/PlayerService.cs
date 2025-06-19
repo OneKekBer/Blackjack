@@ -1,7 +1,6 @@
 using Blackjack.Business.Services.Interfaces;
 using Blackjack.Data.Other.Exceptions;
 using Blackjack.Data.Repositories.Interfaces;
-using Blackjack.GameLogic.Models;
 
 namespace Blackjack.Business.Services;
 

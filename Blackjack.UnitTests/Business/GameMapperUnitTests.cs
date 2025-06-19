@@ -13,8 +13,9 @@ public class GameMapperUnitTests
     public void EntityToModel_WhenConvertGameEntityToModel_ConvertCorrectly()
     {
         // Arrange
+        var playerId = Guid.NewGuid();
         var playerEntity = new PlayerEntity(
-            Guid.NewGuid(),
+            playerId,
             true,
             Role.User,
             "Alice",
@@ -23,14 +24,16 @@ public class GameMapperUnitTests
             "conn123",
             Guid.NewGuid()
         );
-        
+
+        var turnQueue = new List<Guid>();
+
         var gameEntity = new GameEntity(
             Guid.NewGuid(),
             new List<PlayerEntity> { playerEntity },
             GameStatus.Started,
             200,
-            1,
-            "0-0 1-1"
+            "0-0 1-1",
+            turnQueue
         );
 
         // Act
@@ -38,14 +41,17 @@ public class GameMapperUnitTests
 
         // Assert
         Assert.Equal(gameEntity.Bet, game.Bet);
-        Assert.Equal(gameEntity.CurrentPlayerIndex, game.CurrentPlayerIndex);
         Assert.Equal(gameEntity.Status, game.Status);
         Assert.Equal(gameEntity.Players.Count, game.Players.Count);
+
         Assert.Equal(CardConverter.StringToCards(gameEntity.Deck).Count, game.Deck.Count);
         Assert.Equal(CardConverter.StringToCards(gameEntity.Deck)[0].Rank, game.Deck[0].Rank);
         Assert.Equal(CardConverter.StringToCards(gameEntity.Deck)[0].Suits, game.Deck[0].Suits);
+        
+        Assert.Equal(gameEntity.TurnQueue.Count, game.TurnQueue.Count);
+        //Assert.Equal(gameEntity.TurnQueue[0], game.TurnQueue.Peek());
     }
-    
+
     [Fact]
     public void EntityToModel_WhenConvertGameEntityToModelPlayerIsEmpty_ConvertCorrectly()
     {
@@ -55,8 +61,8 @@ public class GameMapperUnitTests
             new List<PlayerEntity>(),
             GameStatus.Started,
             200,
-            1,
-            "0-0 1-1"
+            "0-0 1-1",
+            new List<Guid>()
         );
 
         // Act
@@ -64,20 +70,23 @@ public class GameMapperUnitTests
 
         // Assert
         Assert.Equal(gameEntity.Bet, game.Bet);
-        Assert.Equal(gameEntity.CurrentPlayerIndex, game.CurrentPlayerIndex);
         Assert.Equal(gameEntity.Status, game.Status);
         Assert.Equal(gameEntity.Players.Count, game.Players.Count);
+
         Assert.Equal(CardConverter.StringToCards(gameEntity.Deck).Count, game.Deck.Count);
         Assert.Equal(CardConverter.StringToCards(gameEntity.Deck)[0].Rank, game.Deck[0].Rank);
         Assert.Equal(CardConverter.StringToCards(gameEntity.Deck)[0].Suits, game.Deck[0].Suits);
+
+        Assert.Empty(game.TurnQueue);
     }
 
     [Fact]
     public void ModelToEntity_WhenConvertGameModelToEntity_ConvertCorrectly()
     {
         // Arrange
+        var playerId = Guid.NewGuid();
         var player = new Player(
-            id: Guid.NewGuid(),
+            id: playerId,
             name: "Dealer",
             role: Role.User,
             connectionId: "conn456",
@@ -104,15 +113,20 @@ public class GameMapperUnitTests
             }
         };
 
+        game.TurnQueue.Enqueue(playerId);
+
         // Act
         var gameEntity = GameMapper.ModelToEntity(game);
 
         // Assert
         Assert.Equal(game.Bet, gameEntity.Bet);
         Assert.Equal(game.Status, gameEntity.Status);
-        Assert.Equal(game.CurrentPlayerIndex, gameEntity.CurrentPlayerIndex);
+
         Assert.Equal(game.Deck.Count, CardConverter.StringToCards(gameEntity.Deck).Count);
         Assert.Equal(game.Players.Count, gameEntity.Players.Count);
         Assert.Equal(game.Players[0].Id, gameEntity.Players[0].Id);
+        
+        Assert.Equal(game.TurnQueue.Count, gameEntity.TurnQueue.Count);
+        Assert.Equal(game.TurnQueue.Peek(), gameEntity.TurnQueue[0]);
     }
 }

@@ -1,6 +1,7 @@
 using Blackjack.Business.Services.Interfaces;
 using Blackjack.Presentation.Contracts.Requests;
 using Blackjack.Presentation.Hubs.Interfaces;
+using Blackjack.Presentation.View;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Blackjack.Presentation.Hubs;
@@ -31,9 +32,9 @@ public class GameHub : Hub<IGameHubClient>, IGameHub
             return;
         }
         
-        if (isPlayerExists)
+        if (isPlayerExists) // maybe cringe
         {
-            await Clients.Client(Context.ConnectionId).SendGameState(game);
+            await Clients.Client(Context.ConnectionId).SendGameState(new GameView(game));
             return;
         }
         
@@ -42,8 +43,8 @@ public class GameHub : Hub<IGameHubClient>, IGameHub
             .Select(p => p.ConnectionId)
             .ToList();
 
-        await Clients.Client(Context.ConnectionId).SendNewGame(game);
-        await Clients.Clients(connectionIds).SendGameState(game);
+        await Clients.Client(Context.ConnectionId).SendNewGame(new GameView(game));
+        await Clients.Clients(connectionIds).SendGameState(new GameView(game));
     }
 
     public async Task StartGame(StartGameRequest request)
@@ -54,7 +55,7 @@ public class GameHub : Hub<IGameHubClient>, IGameHub
             .Select(p => p.ConnectionId)
             .ToList();
         
-        await Clients.Clients(connectionIds).SendGameState(game);
+        await Clients.Clients(connectionIds).SendGameState(new GameView(game));
     }
     
     public async Task GetPlayerAction(GetPlayerActionRequest request)
@@ -62,19 +63,6 @@ public class GameHub : Hub<IGameHubClient>, IGameHub
         _logger.LogInformation("Player action");
         await _gameHubService.GetPlayerAction(request.GameId, request.PlayerId, request.Action, Context.ConnectionAborted);
     }
-
-    // public async Task Reconnect(ReconnectRequest request)
-    // {
-    //     var game = await _gameHubService.Reconnect(request.GameId, request.UserId, Context.ConnectionId, Context.ConnectionAborted);
-    //
-    //     if (game is null)
-    //     {
-    //         await Clients.Client(Context.ConnectionId).SendError($"Player with id {request.UserId} in game :{request.GameId} not found");
-    //         return;
-    //     }
-    //     
-    //     await Clients.Client(Context.ConnectionId).SendGameState(game);
-    // }
     
     public override async Task OnDisconnectedAsync(Exception? exception)
     {

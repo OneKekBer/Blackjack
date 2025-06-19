@@ -35,8 +35,9 @@ public static class GameHandler
         {
             player.Cards.Clear();
             player.IsPlaying = true;
+            game.TurnQueue.Enqueue(player.Id);
         });
-        game.CurrentPlayerIndex = 0;
+        
         game.Deck = DeckHandler.NewDeck();
     }
     
@@ -53,7 +54,7 @@ public static class GameHandler
 
         foreach (var winnerId in winnersIds)
         {
-            game.Players.Find(p => p.Id == winnerId).Balance += (pot / winnersIds.Count);
+            game.Players.Find(p => p.Id == winnerId)!.Balance += (pot / winnersIds.Count);
         }
     }
     

@@ -1,4 +1,4 @@
-using Blackjack.GameLogic.Models;
+using Blackjack.Presentation.View;
 
 namespace Blackjack.Presentation.Hubs.Interfaces;
 
@@ -6,7 +6,7 @@ public interface IGameHubClient
 {
     public Task GameStarted();
     public Task SendPlayerAction();
-    public Task SendGameState(Game game);
-    public Task SendNewGame(Game game);
+    public Task SendGameState(GameView game);
+    public Task SendNewGame(GameView game);
     public Task SendError(string message);
 }

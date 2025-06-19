@@ -20,11 +20,21 @@ public class GameRepository : IGameRepository
         await _databaseContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<GameEntity> GetById(Guid id, CancellationToken cancellationToken = default)
+    public async Task<GameEntity?> GetById(Guid id, CancellationToken cancellationToken = default)
     {
         var game = await _databaseContext.Games
             .Include(g => g.Players)
-            .SingleAsync(g => g.Id == id, cancellationToken);
+            .SingleOrDefaultAsync(g => g.Id == id, cancellationToken);
+        
+        return game;
+    }
+
+    public async Task<GameEntity?> GetByIdAsNoTracking(Guid id, CancellationToken cancellationToken = default)
+    {
+        var game = await _databaseContext.Games
+            .AsNoTracking()
+            .Include(g => g.Players)
+            .SingleOrDefaultAsync(g => g.Id == id, cancellationToken);
         
         return game;
     }
