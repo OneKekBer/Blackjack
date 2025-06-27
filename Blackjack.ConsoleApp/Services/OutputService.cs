@@ -18,7 +18,7 @@ public class OutputService : IOutputService
         return Task.CompletedTask;
     }
 
-    public Task ShowResult(Guid gameId, string message, IEnumerable<Player> players)
+    public Task SendResult(Guid gameId, string message, IEnumerable<Player> players)
     {
         Console.WriteLine(message);
 
@@ -32,12 +32,17 @@ public class OutputService : IOutputService
         return Task.CompletedTask;
     }
 
-    public Task ShowNewTurnPlayerId(Guid gameId, Guid currentPlayerId)
+    public Task SendNewTurnPlayerId(Guid gameId, Guid currentPlayerId)
     {
         return Task.CompletedTask;
     }
 
     public Task SendGameState(Game game)
+    {
+        return Task.CompletedTask;
+    }
+
+    public Task SendGameStateById(Guid gameId)
     {
         return Task.CompletedTask;
     }

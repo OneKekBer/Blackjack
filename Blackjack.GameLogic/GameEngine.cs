@@ -34,11 +34,11 @@ public class GameEngine
                 .Select(p => p.Id)
         );
     }
-
+    
     private async Task<PlayerAction> GetPlayerAction(Player player)
     {
         return player.Role == Role.Bot
-            ? _botHandler.Logic(player.Cards.GetScore())
+            ? _botHandler.GetAction(player.Cards.GetScore())
             : await _inputService.GetPlayerAction(_game.Id, player.Id);
     }
     
@@ -47,39 +47,41 @@ public class GameEngine
         if (action == PlayerAction.Stand)
         {
             player.IsPlaying = false;
+            
             return;
         }
-
+        _game.TurnQueue.Enqueue(player.Id);
         player.Cards.Add(GameHandler.GetCard(_game));
+
+        if (player.Role == Role.Bot) return;
         
-        if (player.Role != Role.Bot)
-        {
-            _outputService.ShowPlayerHand(
-                _game.Id,
-                player.Id,
-                player.Cards,
-                player.Cards.GetScore());
-        }
+        _gamePersisterService.SaveGame(_game);
+        _outputService.ShowPlayerHand(
+            _game.Id,
+            player.Id,
+            player.Cards,
+            player.Cards.GetScore());
     }
     
     private async Task PlayRound()
     {
         while (_game.TurnQueue.Any() && GameHandler.IsGameContinue(_game.Players))
         {
-            var currentPlayerId = _game.TurnQueue.Dequeue();
-            _game.TurnQueue.Enqueue(currentPlayerId);
+            var currentPlayerId = _game.TurnQueue.First();
             var currentPlayer = _game.Players.SingleOrDefault(p => p.Id == currentPlayerId);
                 
             if (currentPlayer == null || !currentPlayer.IsPlaying)
                 continue;
-
-            await _outputService.ShowNewTurnPlayerId(_game.Id, currentPlayerId);
+            
+            await _outputService.SendNewTurnPlayerId(_game.Id, currentPlayerId);
             
             var action = await GetPlayerAction(currentPlayer);
+            _game.TurnQueue.Dequeue();
+            await _gamePersisterService.SaveGame(_game);
             HandlePlayerAction(currentPlayer, action);
             
-            await _outputService.SendGameState(_game);
-            await _gamePersisterService.SaveGame(_game); // i dont sure how correctly this method SAVE game
+            await _gamePersisterService.SaveGame(_game); // i don`t sure how correctly this method SAVE game
+            await _outputService.SendGameStateById(_game.Id);
         }
     }
     
@@ -103,7 +105,7 @@ public class GameEngine
             GameHandler.GivePrizes(_game, winnersIds);
 
             var message = MessagesGenerator.GenerateResultMessage(winnersName);
-            await _outputService.ShowResult(_game.Id, message, _game.Players);
+            await _outputService.SendResult(_game.Id, message, _game.Players);
             
             GameHandler.ResetGame(_game);
             

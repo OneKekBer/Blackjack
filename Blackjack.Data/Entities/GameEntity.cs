@@ -31,6 +31,6 @@ public class GameEntity : Entity
     public List<Guid> TurnQueue { get; set; } = new List<Guid>();
     public List<PlayerEntity> Players { get; } = new List<PlayerEntity>();
     public GameStatus Status { get; set; } = GameStatus.WaitingForPlayers;
-    public int Bet { get; } = 100;
+    public int Bet { get; set; } = 100;
     public string Deck { get; set; } = "";
 }

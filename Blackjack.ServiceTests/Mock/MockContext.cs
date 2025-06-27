@@ -6,6 +6,7 @@ using Blackjack.Data.Repositories;
 using Blackjack.Data.Repositories.Interfaces;
 using Blackjack.Presentation.Hubs;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Blackjack.ServiceTests.Mock;
 
@@ -17,10 +18,10 @@ public class MockContext
     public DatabaseContext DatabaseContext { get; }
     public IGameRepository GameRepository { get; }
     public IPlayerRepository PlayerRepository { get; }
-    public IGameHubDispatcher GameHubDispatcher { get; }
 
     public MockContext()
     {
+        
         var options = new DbContextOptionsBuilder<DatabaseContext>()
             .UseInMemoryDatabase(Guid.NewGuid().ToString())
             .Options;
@@ -31,8 +32,8 @@ public class MockContext
         PlayerService = new PlayerService(PlayerRepository);
         GameService = new GameService(GameRepository);
         
-        GameHubDispatcher = new GameHubDispatcher(null, null);
+        var gameHubDispatcher = new GameHubDispatcher(null, null);
 
-        GameHubService = new GameHubService(PlayerRepository, PlayerService, GameRepository, GameHubDispatcher);
+        GameHubService = new GameHubService(PlayerRepository, PlayerService, GameRepository, gameHubDispatcher);
     }
 }

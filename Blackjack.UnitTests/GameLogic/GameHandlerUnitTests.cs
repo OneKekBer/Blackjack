@@ -75,7 +75,6 @@ public class GameHandlerUnitTests
         Assert.Empty(player.Cards);
         Assert.True(player.IsPlaying);
         Assert.NotEmpty(game.Deck);
-        Assert.Equal(0, game.CurrentPlayerIndex);
     }
 
     [Fact]

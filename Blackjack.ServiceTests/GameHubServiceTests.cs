@@ -131,6 +131,43 @@ public class GameHubServiceTests : IClassFixture<MockContext>
         Assert.Equal(2, gameEntityFromDatabase!.TurnQueue.Count);
     }
 
+    [Fact]
+    public async Task AddBotToLobby_AddsBotToLobby_BotsSavesCorrectly()
+    {
+        await _mockContext.DatabaseContext.Database.EnsureDeletedAsync();
+        await _mockContext.DatabaseContext.Database.EnsureCreatedAsync();
+        
+        //Arrange
+        var p1 = new Player(Guid.NewGuid(), "A", Role.User, "", null);
+        var p2 = new Player(Guid.NewGuid(), "B", Role.User, "", null);
+        var gameId = Guid.NewGuid();
+        var gameToDatabase = new Game([p1, p2], gameId);
+        var gameEngine = new GameEngine(null, null, null);
+        
+        //Act
+        await _mockContext.GameRepository.Add(GameMapper.ModelToEntity(gameToDatabase));
+        _mockContext.DatabaseContext.ChangeTracker.Clear();
+        
+        var gameEntity = await _mockContext.GameRepository.GetById(gameId);
+        var game = GameMapper.EntityToModel(gameEntity!);
+        
+        var botId = Guid.NewGuid();
+        var bot = new Player(botId, $"Bot:{botId}", Role.Bot, "", null);
+        var botEntity = PlayerMapper.ModelToEntity(bot);
+        
+        await _mockContext.PlayerRepository.Add(botEntity, CancellationToken.None);
+        gameEntity!.Players.Add(botEntity);
+
+        await _mockContext.GameRepository.Save();
+        _mockContext.DatabaseContext.ChangeTracker.Clear();
+        
+        var gameEntity2 = await _mockContext.GameRepository.GetById(gameId);
+        
+        //Assert
+        Assert.Equal(3, gameEntity2!.Players.Count());
+        Assert.Equal(Role.Bot, gameEntity2.Players.First(p => p.Id == botId).Role);
+    }
+
     /*[Fact]
     public async Task GetPlayerAction_WhenPlayerInGame_ReturnsPlayerAction()
     {

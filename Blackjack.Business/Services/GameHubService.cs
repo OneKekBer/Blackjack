@@ -16,9 +16,14 @@ public class GameHubService : IGameHubService
     private readonly IGameRepository _gameRepository;
     private readonly IGameHubDispatcher _gameHubDispatcher; 
     private readonly GameEngine _gameEngine;
-    private static readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
+    private static readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1); //rework, but how 
 
-    public GameHubService(IPlayerRepository playerRepository, IPlayerService playerService, IGameRepository gameRepository, IGameHubDispatcher gameHubDispatcher)
+    public GameHubService
+    (
+        IPlayerRepository playerRepository,
+        IPlayerService playerService,
+        IGameRepository gameRepository,
+        IGameHubDispatcher gameHubDispatcher)
     {
         _playerRepository = playerRepository;
         _playerService = playerService;
@@ -41,18 +46,18 @@ public class GameHubService : IGameHubService
             
             if (existingPlayer is null)
             {
-                var newPlayer = new Player(Guid.NewGuid(), "", Role.User, connectionId, userId);
+                var playerId = Guid.NewGuid();
+                var newPlayer = new Player(playerId, $"Player: {playerId.ToString().Substring(0, 4)}", Role.User, connectionId, userId);
                 var newPlayerEntity = PlayerMapper.ModelToEntity(newPlayer);
                 await _playerRepository.Add(newPlayerEntity, cancellationToken);
                 gameEntity.Players.Add(newPlayerEntity);
-                await _gameRepository.Save(cancellationToken);
             }
             else
             {
                 existingPlayer.ConnectionId = connectionId;
-                await _gameRepository.Save(cancellationToken);
             }
-            
+            await _gameRepository.Save(cancellationToken);
+
             return GameMapper.EntityToModel(gameEntity);
         }
         finally
@@ -77,15 +82,35 @@ public class GameHubService : IGameHubService
                    ?? throw new NotFoundInDatabaseException($"In getting player action in game with id: {gameId} has not been found");
         
         Console.WriteLine($"TurnQueue GetPlayerAction: {string.Join(", ", gameEntity.TurnQueue)}");
-
-        /*if (gameEntity.TurnQueue.Last() != playerId)
+        
+        if (gameEntity.TurnQueue.First() != playerId)
         {
             return;
-        }*/
+        }
         
         _gameHubDispatcher.SetPlayerAction(playerId, action);
     }
-    
+
+    public async Task<Game?> AddBotToLobby(Guid gameId, Guid userId, CancellationToken cancellationToken = default) 
+        // total bullshit, i think i lost sense, purpose of entities, for what i add them? but maybe i wrong 
+    {
+        var gameEntity = await _gameRepository.GetById(gameId, cancellationToken) 
+                         ?? throw new NotFoundInDatabaseException($"In starting game with id: {gameId} has not been found");
+        
+        if (gameEntity.Status == GameStatus.Started || gameEntity.Players.Count > 8)
+            return null;
+
+        var botId = Guid.NewGuid();
+        var bot = new Player(botId, $"Bot:{botId.ToString().Substring(0, 4)}", Role.Bot, "", null);
+        var botEntity = PlayerMapper.ModelToEntity(bot);
+
+        await _playerRepository.Add(botEntity, cancellationToken);
+        gameEntity.Players.Add(botEntity);
+            
+        await _gameRepository.Update(gameEntity, cancellationToken);
+        return GameMapper.EntityToModel(gameEntity);
+    }
+
     public async Task<Game> StartGame(Guid gameId, CancellationToken cancellationToken)
     {
         var gameEntity = await _gameRepository.GetById(gameId, cancellationToken) 

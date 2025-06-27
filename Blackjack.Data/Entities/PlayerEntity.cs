@@ -22,11 +22,11 @@ public class PlayerEntity : Entity
         UserId = userId;
     }
     
-    public bool IsPlaying { get; } = true; 
-    public Role Role { get; }
+    public bool IsPlaying { get; set; } = true; 
+    public Role Role { get; set; }
     public string Name { get; set; }
-    public int Balance { get; } = 1000;
-    public string Cards { get; } = default!;
+    public int Balance { get; set; } = 1000;
+    public string Cards { get; set; } = default!;
     public string ConnectionId { get; set; } = default!;
     public Guid? UserId { get; set; }
     

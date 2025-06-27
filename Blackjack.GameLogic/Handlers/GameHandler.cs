@@ -31,6 +31,7 @@ public static class GameHandler
     
     public static void ResetGame(Game game)
     {
+        game.TurnQueue.Clear();
         game.Players.ForEach(player =>
         {
             player.Cards.Clear();

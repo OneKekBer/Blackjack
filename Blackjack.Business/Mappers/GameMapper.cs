@@ -20,11 +20,21 @@ public static class GameMapper
         return game;
     }
 
-    public static void CopyModelPropsToEntity(GameEntity entity, Game game)
+    public static void CopyModelPropsToEntity(GameEntity entity, Game game) // this is 100% bullshit
     {
         entity.TurnQueue = game.TurnQueue.ToList();
         entity.Status = game.Status;
         entity.Deck = CardConverter.CardToString(game.Deck);
+        entity.Bet = game.Bet;
+        
+        foreach (var player in game.Players)
+        {
+            var searchingPlayer = entity.Players
+                .Find(p => p.Id == player.Id) ?? throw new Exception("Player entity not found");
+            
+            searchingPlayer.Balance = player.Balance;
+            searchingPlayer.Cards = CardConverter.CardToString(player.Cards);
+        }
     }
     
     public static List<Game> EntityToModel(IEnumerable<GameEntity> entity)

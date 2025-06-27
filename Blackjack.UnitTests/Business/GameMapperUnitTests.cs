@@ -105,7 +105,6 @@ public class GameMapperUnitTests
         {
             Status = GameStatus.WaitingForPlayers,
             Bet = 150,
-            CurrentPlayerIndex = 0,
             Deck = new List<Card>
             {
                 new Card(Suits.Heart, Rank.Nine),

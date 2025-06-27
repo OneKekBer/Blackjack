@@ -6,7 +6,7 @@ public class BotHandler
 {
     private readonly Random _random = new();
     
-    public PlayerAction Logic(int score)
+    public PlayerAction GetAction(int score)
     {
         if (score <= 16) return PlayerAction.Hit;
         return PlayerAction.Stand;

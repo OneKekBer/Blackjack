@@ -9,12 +9,14 @@ public class GameView
     public Guid? CurrentTurn { get; set; }
     public List<Player> Players { get; set; }
     public GameStatus Status { get; set; }
+    public int Deck { get; set; }
 
     public GameView(Game game)
     {
         Id = game.Id;
-        CurrentTurn = game.TurnQueue.LastOrDefault();
+        CurrentTurn = game.TurnQueue.FirstOrDefault();
         Players = game.Players;
         Status = game.Status;
+        Deck = game.Deck.Count;
     }
 }

@@ -64,6 +64,20 @@ public class GameHub : Hub<IGameHubClient>, IGameHub
         await _gameHubService.GetPlayerAction(request.GameId, request.PlayerId, request.Action, Context.ConnectionAborted);
     }
     
+    public async Task AddBotToLobby(AddBotToLobbyRequest request)
+    {
+        var game = await _gameHubService.AddBotToLobby(request.GameId, request.PlayerId, Context.ConnectionAborted);
+        if (game == null)
+            await Clients.Client(Context.ConnectionId).SendError($"You cant add bot to lobby, or lobby is full, or game is started");
+        
+        var connectionIds = game.Players
+            .Where(p => !string.IsNullOrEmpty(p.ConnectionId))
+            .Select(p => p.ConnectionId)
+            .ToList();
+        
+        await Clients.Clients(connectionIds).SendGameState(new GameView(game));
+    }
+    
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
         await base.OnDisconnectedAsync(exception);
