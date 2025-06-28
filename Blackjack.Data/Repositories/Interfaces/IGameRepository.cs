@@ -12,4 +12,5 @@ public interface IGameRepository
     
     public Task Update(GameEntity entity, CancellationToken cancellationToken = default);
     public Task Save(CancellationToken cancellationToken = default);
+    public Task Delete(Guid id, CancellationToken cancellationToken = default);
 }

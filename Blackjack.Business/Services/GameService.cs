@@ -20,6 +20,15 @@ public class GameService : IGameService
         await _gameRepository.Add(GameMapper.ModelToEntity(game), cancellationToken);
     }
 
+    public async Task DeleteAll(CancellationToken cancellationToken = default)
+    {
+        var games = await _gameRepository.GetAll(cancellationToken);
+        foreach (var game in games)
+        {
+            await _gameRepository.Delete(game.Id, cancellationToken);
+        }
+    }
+
     public async Task<IEnumerable<Game>> GetAll(CancellationToken cancellationToken = default)
     {
         var games = await _gameRepository.GetAll(cancellationToken);

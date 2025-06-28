@@ -33,4 +33,11 @@ public class GameController : ControllerBase
         _logger.LogInformation($"Returning {games.Count()}");
         return Ok(games);
     }
+    
+    [HttpDelete("all")]
+    public async Task<IActionResult> DeleteAll(CancellationToken cancellationToken)
+    {
+        await _gameService.DeleteAll(cancellationToken);
+        return Ok();
+    }
 }

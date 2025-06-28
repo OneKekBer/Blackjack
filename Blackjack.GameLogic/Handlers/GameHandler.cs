@@ -59,12 +59,12 @@ public static class GameHandler
         }
     }
     
-    public static Card GetCard(Game game)
+    public static Card GetCard(List<Card> deck)
     {
         var random = new Random();
-        var randomIndex = random.Next(game.Deck.Count - 1);
-        var card = game.Deck[randomIndex];
-        game.Deck.Remove(card);
+        var randomIndex = random.Next(deck.Count - 1);
+        var card = deck[randomIndex];
+        deck.Remove(card);
         
         return card;    
     }

@@ -62,7 +62,7 @@ public class GameHubServiceTests : IClassFixture<MockContext>
 
         // Assert
         var gameEntity = await _mockContext.GameRepository.GetById(gameId);
-        Assert.Single(gameEntity.Players);
+        Assert.Single(gameEntity!.Players);
     }
     
     [Fact]

@@ -109,9 +109,21 @@ public class GameHubDispatcher : IGameHubDispatcher
     {
         using var scope = _scopeFactory.CreateScope();
         var gameRepository = scope.ServiceProvider.GetRequiredService<IGameRepository>();
-        var gameEntity = await gameRepository.GetById(game.Id);
+        var gameEntity = await gameRepository.GetById(game.Id)
+                         ?? throw new NotFoundInDatabaseException("");
         
         GameMapper.CopyModelPropsToEntity(gameEntity, game);
         await gameRepository.Save();
+    }
+
+    public async Task<Game> LoadGame(Guid gameId)
+    {
+        using var scope = _scopeFactory.CreateScope();
+        var gameRepository = scope.ServiceProvider.GetRequiredService<IGameRepository>();
+        
+        var gameEntity = await gameRepository.GetById(gameId)
+                         ?? throw new NotFoundInDatabaseException("");
+        
+        return GameMapper.EntityToModel(gameEntity);
     }
 }

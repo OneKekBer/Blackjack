@@ -123,7 +123,7 @@ public class GameHubService : IGameHubService
         
         await _gameRepository.Save(cancellationToken);
         
-        _gameEngine.Start();
+        _gameEngine.Start(game.Id);
         
         await _gameRepository.Save(cancellationToken);
         

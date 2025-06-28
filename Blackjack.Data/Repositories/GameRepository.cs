@@ -57,4 +57,11 @@ public class GameRepository : IGameRepository
     {
         await _databaseContext.SaveChangesAsync(cancellationToken);
     }
+
+    public async Task Delete(Guid id, CancellationToken cancellationToken = default)
+    {
+        var game = await GetById(id, cancellationToken);
+        _databaseContext.Games.Remove(game);
+        await _databaseContext.SaveChangesAsync(cancellationToken);
+    }
 }
