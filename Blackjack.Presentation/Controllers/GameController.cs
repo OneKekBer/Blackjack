@@ -1,4 +1,5 @@
 using Blackjack.Business.Services.Interfaces;
+using Blackjack.GameLogic.Models;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,17 +20,17 @@ public class GameController : ControllerBase
     }
 
     [HttpGet("create")]
-    public IActionResult Create(CancellationToken cancellationToken)
+    public async Task<IActionResult> Create(CancellationToken cancellationToken)
     {
-        _gameService.Create(cancellationToken);
+        await _gameService.Create(cancellationToken);
         return Ok();
     }
     
     [HttpGet("get-all")]
-    public IActionResult GetAll(CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
     {
-        var games = _gameService.GetAll(cancellationToken);
-        _logger.LogInformation($"Returning {games.Result.Count()}");
+        var games = await _gameService.GetAll(cancellationToken);
+        _logger.LogInformation($"Returning {games.Count()}");
         return Ok(games);
     }
 }

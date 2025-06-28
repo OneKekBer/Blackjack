@@ -23,7 +23,7 @@ public class MockContext
     {
         
         var options = new DbContextOptionsBuilder<DatabaseContext>()
-            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .UseInMemoryDatabase("TestInMemoryDatabase")
             .Options;
 
         DatabaseContext = new DatabaseContext(options);

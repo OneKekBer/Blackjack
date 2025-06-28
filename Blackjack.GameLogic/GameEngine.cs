@@ -65,7 +65,7 @@ public class GameEngine
     
     private async Task PlayRound()
     {
-        while (_game.TurnQueue.Any() && GameHandler.IsGameContinue(_game.Players))
+        while (_game.TurnQueue.Any())
         {
             var currentPlayerId = _game.TurnQueue.First();
             var currentPlayer = _game.Players.SingleOrDefault(p => p.Id == currentPlayerId);
