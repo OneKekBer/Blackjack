@@ -46,8 +46,10 @@ public class GameHubServiceTests : IClassFixture<MockContext>
     [Fact]
     public async Task JoinGame_WhenPlayerAlreadyInGame_DoesNotDuplicatePlayer()
     {
-        await _mockContext.DatabaseContext.Database.EnsureDeletedAsync();
-        await _mockContext.DatabaseContext.Database.EnsureCreatedAsync();
+        var databaseContext = await _mockContext.DbContextFactory.CreateDbContextAsync();
+
+        await databaseContext.Database.EnsureDeletedAsync();
+        await databaseContext.Database.EnsureCreatedAsync();
 
         // Arrange
         var playerId = Guid.NewGuid();
@@ -59,7 +61,7 @@ public class GameHubServiceTests : IClassFixture<MockContext>
 
         await _mockContext.PlayerRepository.Add(PlayerMapper.ModelToEntity(existingPlayer));
         await _mockContext.GameRepository.Add(GameMapper.ModelToEntity(game));
-        _mockContext.DatabaseContext.ChangeTracker.Clear();
+        databaseContext.ChangeTracker.Clear();
         // Act
         await _mockContext.GameHubService.JoinGame(playerId, gameId, connectionId);
 
@@ -71,8 +73,10 @@ public class GameHubServiceTests : IClassFixture<MockContext>
     [Fact]
     public async Task JoinGame_WhenThreeDifferentPlayersJoin_AllAreAddedCorrectly()
     {
-        await _mockContext.DatabaseContext.Database.EnsureDeletedAsync();
-        await _mockContext.DatabaseContext.Database.EnsureCreatedAsync();
+        var databaseContext = await _mockContext.DbContextFactory.CreateDbContextAsync();
+
+        await databaseContext.Database.EnsureDeletedAsync();
+        await databaseContext.Database.EnsureCreatedAsync();
 
         // Arrange
         var gameId = Guid.NewGuid();
@@ -107,8 +111,10 @@ public class GameHubServiceTests : IClassFixture<MockContext>
     [Fact]
     public async Task StartGameFake_WhenGameStarted_GameStateIsUpdated()
     {
-        await _mockContext.DatabaseContext.Database.EnsureDeletedAsync();
-        await _mockContext.DatabaseContext.Database.EnsureCreatedAsync();
+        var databaseContext = await _mockContext.DbContextFactory.CreateDbContextAsync();
+
+        await databaseContext.Database.EnsureDeletedAsync();
+        await databaseContext.Database.EnsureCreatedAsync();
      
         //arrange
         var p1 = new Player(Guid.NewGuid(), "A", Role.User, "", null);
@@ -119,7 +125,7 @@ public class GameHubServiceTests : IClassFixture<MockContext>
         
         //Act
         await _mockContext.GameRepository.Add(GameMapper.ModelToEntity(gameToDatabase));
-        _mockContext.DatabaseContext.ChangeTracker.Clear();
+        databaseContext.ChangeTracker.Clear();
 
         var gameEntity = await _mockContext.GameRepository.GetByIdAsNoTracking(gameId);
         var game = GameMapper.EntityToModel(gameEntity!);
@@ -136,8 +142,10 @@ public class GameHubServiceTests : IClassFixture<MockContext>
     [Fact]
     public async Task AddBotToLobby_AddsBotToLobby_BotsSavesCorrectly()
     {
-        await _mockContext.DatabaseContext.Database.EnsureDeletedAsync();
-        await _mockContext.DatabaseContext.Database.EnsureCreatedAsync();
+        var databaseContext = await _mockContext.DbContextFactory.CreateDbContextAsync();
+
+        await databaseContext.Database.EnsureDeletedAsync();
+        await databaseContext.Database.EnsureCreatedAsync();
         
         //Arrange
         var p1 = new Player(Guid.NewGuid(), "A", Role.User, "", null);
@@ -153,7 +161,7 @@ public class GameHubServiceTests : IClassFixture<MockContext>
             await _mockContext.PlayerRepository.Add(player);
         }
         await _mockContext.GameRepository.Add(entityGameToDatabase); // players = 2
-        _mockContext.DatabaseContext.ChangeTracker.Clear();
+        databaseContext.ChangeTracker.Clear();
         
         var gameEntity = await _mockContext.GameRepository.GetById(gameId); // players = 0
         var game = GameMapper.EntityToModel(gameEntity!);
@@ -166,7 +174,7 @@ public class GameHubServiceTests : IClassFixture<MockContext>
         gameEntity!.Players.Add(botEntity);
 
         await _mockContext.GameRepository.Update(gameEntity);
-        _mockContext.DatabaseContext.ChangeTracker.Clear();
+        databaseContext.ChangeTracker.Clear();
         
         var gameEntity2 = await _mockContext.GameRepository.GetById(gameId);
         
@@ -178,9 +186,11 @@ public class GameHubServiceTests : IClassFixture<MockContext>
     [Fact]
     public async Task StartGame_WhenGameStarted_GameStateIsUpdated()
     {
+        var databaseContext = await _mockContext.DbContextFactory.CreateDbContextAsync();
+
         // Arrange
-        await _mockContext.DatabaseContext.Database.EnsureDeletedAsync();
-        await _mockContext.DatabaseContext.Database.EnsureCreatedAsync();
+        await databaseContext.Database.EnsureDeletedAsync();
+        await databaseContext.Database.EnsureCreatedAsync();
 
         var p1 = new Player(Guid.NewGuid(), "A", Role.User, "", null);
         var p2 = new Player(Guid.NewGuid(), "B", Role.User, "", null);
@@ -192,11 +202,11 @@ public class GameHubServiceTests : IClassFixture<MockContext>
             await _mockContext.PlayerRepository.Add(PlayerMapper.ModelToEntity(player));
         }*/
         await _mockContext.GameRepository.Add(GameMapper.ModelToEntity(gameToDatabase));
-        _mockContext.DatabaseContext.ChangeTracker.Clear();
+        databaseContext.ChangeTracker.Clear();
 
         // Act;
         await _mockContext.GameHubService.StartGame(gameId, CancellationToken.None);
-        _mockContext.DatabaseContext.ChangeTracker.Clear();
+        databaseContext.ChangeTracker.Clear();
 
         var gameEntityAfterStart = await _mockContext.GameRepository.GetById(gameId);
         var gameAfterStart = GameMapper.EntityToModel(gameEntityAfterStart!);

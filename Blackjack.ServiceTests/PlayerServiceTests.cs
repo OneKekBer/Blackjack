@@ -13,7 +13,7 @@ public class PlayerServiceTests
     private readonly DatabaseContext _context;
     private readonly IPlayerRepository _playerRepository;
 
-    public PlayerServiceTests()
+    /*public PlayerServiceTests()
     {
         var options = new DbContextOptionsBuilder<DatabaseContext>()
             .UseInMemoryDatabase(Guid.NewGuid().ToString())
@@ -23,7 +23,7 @@ public class PlayerServiceTests
         
         _playerRepository = new PlayerRepository(_context);
         _playerService = new PlayerService(_playerRepository);
-    }
+    }*/
 
     /*[Fact]
     public async Task GetValidatedPlayer_ValidateNonExistentPlayer_ReturnValidPlayer()
