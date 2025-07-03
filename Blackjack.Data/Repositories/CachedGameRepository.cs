@@ -18,11 +18,6 @@ public class CachedGameRepository : IGameRepository
         _memoryCache = memoryCache;
         _logger = logger;
     }
-
-    /*private async Task<GameEntity> GetOrAddCache(Guid id, CancellationToken cancellationToken = default)
-    {
-        
-    }*/
     
     private void AddCache(GameEntity entity)
     {
@@ -96,14 +91,14 @@ public class CachedGameRepository : IGameRepository
         return databaseEntity;
     }
 
-    public Task<IEnumerable<GameEntity>> GetAll(CancellationToken cancellationToken = default)
+    public Task<IEnumerable<GameEntity>> GetAll(CancellationToken cancellationToken = default) // how get all from cache??))
     {
         return _gameRepository.GetAll(cancellationToken);
     }
 
     public async Task Update(GameEntity entity, CancellationToken cancellationToken = default) // need to save tracking 
     {
-        
+        AddCache(entity);
         await _gameRepository.Update(entity, cancellationToken);
     }
 
@@ -114,6 +109,7 @@ public class CachedGameRepository : IGameRepository
 
     public async Task Delete(GameEntity entity, CancellationToken cancellationToken = default)
     {
+        _memoryCache.Remove(entity.Id);
         await _gameRepository.Delete(entity, cancellationToken);
     }
 
