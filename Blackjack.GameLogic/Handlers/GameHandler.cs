@@ -44,7 +44,7 @@ public static class GameHandler
     
     public static void GivePrizes(Game game, List<Guid> winnersIds)
     {
-        if (winnersIds.Count ==  0) return;
+        if (winnersIds.Count == 0) return;
         var pot = 0;
 
         foreach (var player in game.Players)
@@ -92,4 +92,15 @@ public static class GameHandler
         
         return false;
     }
+
+    /*
+    public static bool IsGameContinuing(IEnumerable<Player> players)
+    {
+        foreach (var player in players)
+        {
+            
+        }
+        
+        return true;
+    }*/ 
 }

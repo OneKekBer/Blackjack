@@ -20,9 +20,10 @@ public class GameHubDispatcherServiceTests : IClassFixture<MockContext>
     [Fact]
     public async Task SaveGame_WhenSaveGame_DataSavesCorrectly()
     {
+        var databaseContext = await _mockContext.DbContextFactory.CreateDbContextAsync();
         // Arrange
-        await _mockContext.DatabaseContext.Database.EnsureDeletedAsync();
-        await _mockContext.DatabaseContext.Database.EnsureCreatedAsync();
+        await databaseContext.Database.EnsureDeletedAsync();
+        await databaseContext.Database.EnsureCreatedAsync();
 
         var p1 = new Player(Guid.NewGuid(), "A", Role.User, "", null);
         var p2 = new Player(Guid.NewGuid(), "B", Role.User, "", null);
@@ -40,13 +41,13 @@ public class GameHubDispatcherServiceTests : IClassFixture<MockContext>
         
         await _mockContext.GameRepository.Add(GameMapper.ModelToEntity(game));
         await _mockContext.GameRepository.Save();
-        _mockContext.DatabaseContext.ChangeTracker.Clear();
+        databaseContext.ChangeTracker.Clear();
         
         game.Players.First(p => p.Name == "A").Balance = 1500;
 
         var dispatcher = new GameHubDispatcher(null!, null); 
         await dispatcher.SaveGame(game);
-        _mockContext.DatabaseContext.ChangeTracker.Clear();
+        databaseContext.ChangeTracker.Clear();
 
         // Act
         var updatedGameEntity = await _mockContext.GameRepository.GetById(gameId);

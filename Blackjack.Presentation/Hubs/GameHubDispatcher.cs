@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using Blackjack.Business.Mappers;
+using Blackjack.Business.Services.Interfaces;
 using Blackjack.Data.Interfaces;
 using Blackjack.Data.Other.Exceptions;
 using Blackjack.Data.Repositories.Interfaces;
@@ -48,45 +49,25 @@ public class GameHubDispatcher : IGameHubDispatcher
     public async Task SendNewTurnPlayerId(Guid gameId, Guid currentPlayerId)
     {
         using var scope = _scopeFactory.CreateScope();
-        var gameRepository = scope.ServiceProvider.GetRequiredService<IGameRepository>();
+        var gameService = scope.ServiceProvider.GetRequiredService<IGameService>();
 
-        var gameEntity = await gameRepository.GetByIdAsNoTracking(gameId) 
-                         ?? throw new NotFoundInDatabaseException("");
-        
-        var connectionIds = gameEntity.Players
-            .Select(p => p.ConnectionId);
-        
+        var connectionIds = await gameService.GetPlayersConnectionIds(gameId);
+            
         await _hubContext.Clients.Clients(connectionIds).SendAsync("SendNewTurnId", gameId, currentPlayerId);
     }
 
-    public async Task SendGameState(Game game)
+    public async Task SendGameState(Game game) // why i cant just take connectionsids from attribute ?
+                                                //maybe current game dont have correct connection ids? because its not important in 
+                                                //frontend and on reconnect new connectionid can be not updated in current game
     {
         using var scope = _scopeFactory.CreateScope();
-        var gameRepository = scope.ServiceProvider.GetRequiredService<IGameRepository>();
+        var gameService = scope.ServiceProvider.GetRequiredService<IGameService>(); 
         
-        var gameEntity = await gameRepository.GetByIdAsNoTracking(game.Id)
-                         ?? throw new NotFoundInDatabaseException("");
-        
-        var connectionIds = gameEntity.Players
-            .Select(p => p.ConnectionId);
+        var connectionIds = await gameService.GetPlayersConnectionIds(game.Id);
         
         await _hubContext.Clients.Clients(connectionIds).SendAsync("SendGameState", new GameView(game));
     }
-
-    public async Task SendGameStateById(Guid gameId)
-    {
-        using var scope = _scopeFactory.CreateScope();
-        var gameRepository = scope.ServiceProvider.GetRequiredService<IGameRepository>();
-        
-        var gameEntity = await gameRepository.GetByIdAsNoTracking(gameId)
-                         ?? throw new NotFoundInDatabaseException("");
-        
-        var connectionIds = gameEntity.Players
-            .Select(p => p.ConnectionId);
-        
-        await _hubContext.Clients.Clients(connectionIds).SendAsync("SendGameState", new GameView(GameMapper.EntityToModel(gameEntity)));
-    }
-
+    
     public async Task<PlayerAction> GetPlayerAction(Guid gameId, Guid playerId)
     {
         var tcs = new TaskCompletionSource<PlayerAction>();
@@ -109,11 +90,8 @@ public class GameHubDispatcher : IGameHubDispatcher
     {
         using var scope = _scopeFactory.CreateScope();
         var gameRepository = scope.ServiceProvider.GetRequiredService<IGameRepository>();
-        var gameEntity = await gameRepository.GetById(game.Id)
-                         ?? throw new NotFoundInDatabaseException("");
         
-        GameMapper.CopyModelPropsToEntity(gameEntity, game);
-        await gameRepository.Save();
+        await gameRepository.SaveGameEntity(GameMapper.ModelToEntity(game));
     }
 
     public async Task<Game> LoadGame(Guid gameId)

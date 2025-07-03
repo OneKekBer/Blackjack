@@ -1,5 +1,6 @@
 using Blackjack.Business.Mappers;
 using Blackjack.Business.Services.Interfaces;
+using Blackjack.Data.Other.Exceptions;
 using Blackjack.Data.Repositories.Interfaces;
 using Blackjack.GameLogic.Models;
 
@@ -25,7 +26,8 @@ public class GameService : IGameService
         var games = await _gameRepository.GetAll(cancellationToken);
         foreach (var game in games)
         {
-            await _gameRepository.Delete(game.Id, cancellationToken);
+            var gameEntity = await _gameRepository.GetById(game.Id, cancellationToken);
+            await _gameRepository.Delete(gameEntity!, cancellationToken);
         }
     }
 
@@ -33,5 +35,13 @@ public class GameService : IGameService
     {
         var games = await _gameRepository.GetAll(cancellationToken);
         return GameMapper.EntityToModel(games);
+    }
+
+    public async Task<IEnumerable<string>> GetPlayersConnectionIds(Guid id, CancellationToken cancellationToken = default)
+    {
+        var gameEntity = await _gameRepository.GetById(id, cancellationToken) 
+                         ?? throw new NotFoundInDatabaseException("");
+        
+        return gameEntity.Players.Select(p => p.ConnectionId);
     }
 }

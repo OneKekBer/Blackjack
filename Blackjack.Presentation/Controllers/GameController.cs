@@ -1,5 +1,4 @@
 using Blackjack.Business.Services.Interfaces;
-using Blackjack.GameLogic.Models;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 

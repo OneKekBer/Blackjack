@@ -53,7 +53,6 @@ public class GameEngine
 
         if (player.Role == Role.Bot) return;
         
-        _gamePersisterService.SaveGame(game);
         _outputService.ShowPlayerHand(
             game.Id,
             player.Id,
@@ -79,13 +78,13 @@ public class GameEngine
             HandlePlayerAction(currentPlayer, action, game);
             
             await _gamePersisterService.SaveGame(game); // i don`t sure how correctly this method SAVE game
-            await _outputService.SendGameStateById(game.Id);
+            await _outputService.SendGameState(game);
         }
     }
     
     public async Task Start(Guid gameId)
     {
-        while (true)
+        while (true) // maybe change on while CancellationToken != None
         {
             var game = await _gamePersisterService.LoadGame(gameId);
             //validate game on only bots/one player/mb smth else

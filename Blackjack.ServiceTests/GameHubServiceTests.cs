@@ -1,3 +1,4 @@
+using Blackjack.Business.Helpers;
 using Blackjack.Business.Mappers;
 using Blackjack.GameLogic;
 using Blackjack.GameLogic.Models;
@@ -19,8 +20,10 @@ public class GameHubServiceTests : IClassFixture<MockContext>
     [Fact]
     public async Task JoinGame_WhenPlayerNotInGame_AddsPlayerToGame()
     {
-        await _mockContext.DatabaseContext.Database.EnsureDeletedAsync();
-        await _mockContext.DatabaseContext.Database.EnsureCreatedAsync();
+        var databaseContext = await _mockContext.DbContextFactory.CreateDbContextAsync();
+
+        await databaseContext.Database.EnsureDeletedAsync();
+        await databaseContext.Database.EnsureCreatedAsync();
 
         // Arrange
         var gameId = Guid.NewGuid();
@@ -56,9 +59,9 @@ public class GameHubServiceTests : IClassFixture<MockContext>
 
         await _mockContext.PlayerRepository.Add(PlayerMapper.ModelToEntity(existingPlayer));
         await _mockContext.GameRepository.Add(GameMapper.ModelToEntity(game));
-
+        _mockContext.DatabaseContext.ChangeTracker.Clear();
         // Act
-        var result = await _mockContext.GameHubService.JoinGame(playerId, gameId, connectionId);
+        await _mockContext.GameHubService.JoinGame(playerId, gameId, connectionId);
 
         // Assert
         var gameEntity = await _mockContext.GameRepository.GetById(gameId);
@@ -102,7 +105,7 @@ public class GameHubServiceTests : IClassFixture<MockContext>
     }
     
     [Fact]
-    public async Task StartGame_WhenGameStarted_GameStateIsUpdated()
+    public async Task StartGameFake_WhenGameStarted_GameStateIsUpdated()
     {
         await _mockContext.DatabaseContext.Database.EnsureDeletedAsync();
         await _mockContext.DatabaseContext.Database.EnsureCreatedAsync();
@@ -122,8 +125,7 @@ public class GameHubServiceTests : IClassFixture<MockContext>
         var game = GameMapper.EntityToModel(gameEntity!);
         
         gameEngine.InitGame(game);
-        await _mockContext.GameRepository.Update(GameMapper.ModelToEntity(game)!, CancellationToken.None);
-        await _mockContext.GameRepository.Save();
+        await _mockContext.GameRepository.SaveGameEntity(GameMapper.ModelToEntity(game));
         
         var gameEntityFromDatabase = await _mockContext.GameRepository.GetById(gameId);
         
@@ -145,10 +147,15 @@ public class GameHubServiceTests : IClassFixture<MockContext>
         var gameEngine = new GameEngine(null, null, null);
         
         //Act
-        await _mockContext.GameRepository.Add(GameMapper.ModelToEntity(gameToDatabase));
+        var entityGameToDatabase = GameMapper.ModelToEntity(gameToDatabase);
+        foreach (var player in entityGameToDatabase.Players)
+        {
+            await _mockContext.PlayerRepository.Add(player);
+        }
+        await _mockContext.GameRepository.Add(entityGameToDatabase); // players = 2
         _mockContext.DatabaseContext.ChangeTracker.Clear();
         
-        var gameEntity = await _mockContext.GameRepository.GetById(gameId);
+        var gameEntity = await _mockContext.GameRepository.GetById(gameId); // players = 0
         var game = GameMapper.EntityToModel(gameEntity!);
         
         var botId = Guid.NewGuid();
@@ -158,7 +165,7 @@ public class GameHubServiceTests : IClassFixture<MockContext>
         await _mockContext.PlayerRepository.Add(botEntity, CancellationToken.None);
         gameEntity!.Players.Add(botEntity);
 
-        await _mockContext.GameRepository.Save();
+        await _mockContext.GameRepository.Update(gameEntity);
         _mockContext.DatabaseContext.ChangeTracker.Clear();
         
         var gameEntity2 = await _mockContext.GameRepository.GetById(gameId);
@@ -167,15 +174,43 @@ public class GameHubServiceTests : IClassFixture<MockContext>
         Assert.Equal(3, gameEntity2!.Players.Count());
         Assert.Equal(Role.Bot, gameEntity2.Players.First(p => p.Id == botId).Role);
     }
-
-    /*[Fact]
-    public async Task GetPlayerAction_WhenPlayerInGame_ReturnsPlayerAction()
+    
+    [Fact]
+    public async Task StartGame_WhenGameStarted_GameStateIsUpdated()
     {
+        // Arrange
         await _mockContext.DatabaseContext.Database.EnsureDeletedAsync();
         await _mockContext.DatabaseContext.Database.EnsureCreatedAsync();
 
-        await _mockContext.GameHubService.GetPlayerAction();
+        var p1 = new Player(Guid.NewGuid(), "A", Role.User, "", null);
+        var p2 = new Player(Guid.NewGuid(), "B", Role.User, "", null);
+        var gameId = Guid.NewGuid();
+        var gameToDatabase = new Game([p1, p2], gameId);
         
+        /*foreach (var player in gameToDatabase.Players)
+        {
+            await _mockContext.PlayerRepository.Add(PlayerMapper.ModelToEntity(player));
+        }*/
+        await _mockContext.GameRepository.Add(GameMapper.ModelToEntity(gameToDatabase));
+        _mockContext.DatabaseContext.ChangeTracker.Clear();
+
+        // Act;
+        await _mockContext.GameHubService.StartGame(gameId, CancellationToken.None);
+        _mockContext.DatabaseContext.ChangeTracker.Clear();
+
+        var gameEntityAfterStart = await _mockContext.GameRepository.GetById(gameId);
+        var gameAfterStart = GameMapper.EntityToModel(gameEntityAfterStart!);
+        // Assert
+        Assert.NotNull(gameAfterStart);
+        Assert.Equal(2, gameAfterStart.TurnQueue.Count);
+        Assert.Contains(gameAfterStart.Players[0].Id, gameAfterStart.TurnQueue);
+        Assert.Contains(gameAfterStart.Players[1].Id, gameAfterStart.TurnQueue);
+        Assert.Equal(GameStatus.Started, gameAfterStart.Status);
         
-    }*/
+        Assert.NotNull(gameEntityAfterStart);
+        Assert.Equal(2, gameEntityAfterStart.TurnQueue.Count);
+        Assert.Equal(GameStatus.Started, gameEntityAfterStart.Status);
+        Assert.Equal(36, CardConverter.StringToCards(gameEntityAfterStart.Deck).Count);
+        
+    }
 }

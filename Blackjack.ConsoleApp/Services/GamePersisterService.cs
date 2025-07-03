@@ -10,6 +10,11 @@ public class GamePersisterService : IGamePersisterService
         return;
     }
 
+    public Task<Game> LoadGame(Guid gameId)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task SaveGameAndSendState(Game game)
     {
         return;

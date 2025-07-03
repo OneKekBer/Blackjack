@@ -16,8 +16,8 @@ public class GameHubService : IGameHubService
     private readonly IGameRepository _gameRepository;
     private readonly IGameHubDispatcher _gameHubDispatcher; 
     private readonly GameEngine _gameEngine;
-    private static readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1); //rework, but how 
-
+    private static readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1); //rework, but how,
+                                                                           //i even dont know what is SemaphoreSlim(( its just works
     public GameHubService
     (
         IPlayerRepository playerRepository,
@@ -56,8 +56,8 @@ public class GameHubService : IGameHubService
             {
                 existingPlayer.ConnectionId = connectionId;
             }
-            await _gameRepository.Save(cancellationToken);
-
+            await _gameRepository.Update(gameEntity, cancellationToken);
+            
             return GameMapper.EntityToModel(gameEntity);
         }
         finally
@@ -110,22 +110,18 @@ public class GameHubService : IGameHubService
         await _gameRepository.Update(gameEntity, cancellationToken);
         return GameMapper.EntityToModel(gameEntity);
     }
-
+    
     public async Task<Game> StartGame(Guid gameId, CancellationToken cancellationToken)
     {
-        var gameEntity = await _gameRepository.GetById(gameId, cancellationToken) 
+        var gameEntity = await _gameRepository.GetByIdAsNoTracking(gameId, cancellationToken)  // take entity from db
                          ?? throw new NotFoundInDatabaseException($"In starting game with id: {gameId} has not been found");
         
-        var game = GameMapper.EntityToModel(gameEntity);
-        _gameEngine.InitGame(game);
+        var game = GameMapper.EntityToModel(gameEntity); // map entity -> model
+        _gameEngine.InitGame(game); // edit model
         
-        GameMapper.CopyModelPropsToEntity(gameEntity, game);
-        
-        await _gameRepository.Save(cancellationToken);
+        await _gameRepository.SaveGameEntity(GameMapper.ModelToEntity(game), cancellationToken);
         
         _gameEngine.Start(game.Id);
-        
-        await _gameRepository.Save(cancellationToken);
         
         return game;
     }

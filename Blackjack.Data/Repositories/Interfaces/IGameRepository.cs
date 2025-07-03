@@ -9,8 +9,9 @@ public interface IGameRepository
     public Task<GameEntity?> GetById(Guid id, CancellationToken cancellationToken = default);
     public Task<GameEntity?> GetByIdAsNoTracking(Guid id, CancellationToken cancellationToken = default);
     public Task<IEnumerable<GameEntity>> GetAll(CancellationToken cancellationToken = default);
-    
     public Task Update(GameEntity entity, CancellationToken cancellationToken = default);
     public Task Save(CancellationToken cancellationToken = default);
-    public Task Delete(Guid id, CancellationToken cancellationToken = default);
+    public Task Delete(GameEntity entity, CancellationToken cancellationToken = default);
+    public Task SaveGameEntity(GameEntity entity, CancellationToken cancellationToken = default);
+    public void Attach(GameEntity entity);
 }

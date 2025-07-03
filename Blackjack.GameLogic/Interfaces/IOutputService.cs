@@ -8,5 +8,4 @@ public interface IOutputService
     public Task SendResult(Guid gameId, string message, IEnumerable<Player> players);
     public Task SendNewTurnPlayerId(Guid gameId, Guid currentPlayerId);
     public Task SendGameState(Game game);
-    public Task SendGameStateById(Guid gameId);
 }

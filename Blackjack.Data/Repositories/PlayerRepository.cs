@@ -8,22 +8,26 @@ namespace Blackjack.Data.Repositories;
 
 public class PlayerRepository : IPlayerRepository
 {
-    private readonly DatabaseContext _databaseContext;
+    private readonly IDbContextFactory<DatabaseContext> _contextFactory;
     
-    public PlayerRepository(DatabaseContext databaseContext)
+    public PlayerRepository(IDbContextFactory<DatabaseContext> contextFactory)
     {
-        _databaseContext = databaseContext;
+        _contextFactory = contextFactory;
     }
 
     public async Task Add(PlayerEntity entity, CancellationToken cancellationToken = default)
     {
-        await _databaseContext.Players.AddAsync(entity, cancellationToken);
-        await _databaseContext.SaveChangesAsync(cancellationToken);
+        var databaseContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        
+        await databaseContext.Players.AddAsync(entity, cancellationToken);
+        await databaseContext.SaveChangesAsync(cancellationToken);
     }
 
     public async Task<PlayerEntity?> GetById(Guid id, CancellationToken cancellationToken = default)
     {
-        var entity = await _databaseContext.Players
+        var databaseContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
+
+        var entity = await databaseContext.Players
             .SingleOrDefaultAsync(p => p.Id == id, cancellationToken);
 
         return entity;
@@ -31,21 +35,27 @@ public class PlayerRepository : IPlayerRepository
 
     public async Task DeleteById(Guid id, CancellationToken cancellationToken = default)
     {
+        var databaseContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
+
         var game = await GetById(id, cancellationToken) 
                    ?? throw new NotFoundInDatabaseException($"game with id: {id} has not been found PlayerRepository.DeleteById");
         
-        _databaseContext.Players.Remove(game);
-        await _databaseContext.SaveChangesAsync(cancellationToken);
+        databaseContext.Players.Remove(game);
+        await databaseContext.SaveChangesAsync(cancellationToken);
     }
 
     public async Task Update(PlayerEntity entity, CancellationToken cancellationToken = default)
     {
-        _databaseContext.Players.Update(entity);
-        await _databaseContext.SaveChangesAsync(cancellationToken);
+        var databaseContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
+
+        databaseContext.Players.Update(entity);
+        await databaseContext.SaveChangesAsync(cancellationToken);
     }
 
     public async Task Save(CancellationToken cancellationToken = default)
     {
-        await _databaseContext.SaveChangesAsync(cancellationToken);
+        var databaseContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
+
+        await databaseContext.SaveChangesAsync(cancellationToken);
     }
 }

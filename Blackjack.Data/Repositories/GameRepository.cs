@@ -2,36 +2,58 @@ using Blackjack.Data.Context;
 using Blackjack.Data.Entities;
 using Blackjack.Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace Blackjack.Data.Repositories;
 
 public class GameRepository : IGameRepository
 {
-    private readonly DatabaseContext _databaseContext;
+    private readonly IDbContextFactory<DatabaseContext> _contextFactory;
     
-    public GameRepository(DatabaseContext databaseContext)
+    public GameRepository(IDbContextFactory<DatabaseContext> contextFactory)
     {
-        _databaseContext = databaseContext;
+        _contextFactory = contextFactory;
     }
     
     public async Task Add(GameEntity entity, CancellationToken cancellationToken = default)
+    {   
+        var databaseContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        
+        await databaseContext.Games.AddAsync(entity, cancellationToken);
+        await databaseContext.SaveChangesAsync(cancellationToken);
+    }
+    
+    public async Task SaveGameEntity(GameEntity entity, CancellationToken cancellationToken = default)
     {
-        await _databaseContext.Games.AddAsync(entity, cancellationToken);
-        await _databaseContext.SaveChangesAsync(cancellationToken);
+        var databaseContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        
+        databaseContext.Games.Attach(entity);
+        await Update(entity, cancellationToken);
+    }
+
+    public async void Attach(GameEntity entity)
+    {
+        var databaseContext = await _contextFactory.CreateDbContextAsync();
+
+        databaseContext.Games.Attach(entity);
     }
 
     public async Task<GameEntity?> GetById(Guid id, CancellationToken cancellationToken = default)
     {
-        var game = await _databaseContext.Games
+        var databaseContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
+
+        var gameEntity = await databaseContext.Games
             .Include(g => g.Players)
-            .SingleOrDefaultAsync(g => g.Id == id, cancellationToken);
+            .SingleOrDefaultAsync((g) => g.Id == id, cancellationToken);
         
-        return game;
+        return gameEntity;
     }
 
     public async Task<GameEntity?> GetByIdAsNoTracking(Guid id, CancellationToken cancellationToken = default)
     {
-        var game = await _databaseContext.Games
+        var databaseContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
+
+        var game = await databaseContext.Games
             .AsNoTracking()
             .Include(g => g.Players)
             .SingleOrDefaultAsync(g => g.Id == id, cancellationToken);
@@ -41,7 +63,10 @@ public class GameRepository : IGameRepository
 
     public async Task<IEnumerable<GameEntity>> GetAll(CancellationToken cancellationToken = default)
     {
-        var games = await _databaseContext.Games
+        var databaseContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
+
+        var games = await databaseContext.Games
+            .AsNoTracking()
             .ToListAsync(cancellationToken);
         
         return games;
@@ -49,19 +74,27 @@ public class GameRepository : IGameRepository
 
     public async Task Update(GameEntity entity, CancellationToken cancellationToken = default)
     {
-        _databaseContext.Games.Update(entity);
-        await _databaseContext.SaveChangesAsync(cancellationToken);
+        var databaseContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
+
+        databaseContext.Games.Update(entity);
+        await Save(cancellationToken);
     }
 
     public async Task Save(CancellationToken cancellationToken = default)
     {
-        await _databaseContext.SaveChangesAsync(cancellationToken);
+        var databaseContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
+
+        await databaseContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task Delete(Guid id, CancellationToken cancellationToken = default)
+    public async Task Delete(GameEntity entity, CancellationToken cancellationToken = default)
     {
-        var game = await GetById(id, cancellationToken);
-        _databaseContext.Games.Remove(game);
-        await _databaseContext.SaveChangesAsync(cancellationToken);
+        var databaseContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
+
+        databaseContext.Games.Remove(entity);
+        await Save(cancellationToken);
     }
 }
+
+
+
