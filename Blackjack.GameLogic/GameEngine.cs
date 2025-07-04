@@ -75,8 +75,8 @@ public class GameEngine
             
             var action = await GetPlayerAction(currentPlayer, game.Id);
             game.TurnQueue.Dequeue();
-            await _gamePersisterService.SaveGame(game);
             HandlePlayerAction(currentPlayer, action, game);
+            await _gamePersisterService.SaveGame(game);
             
             await _gamePersisterService.SaveGame(game); // i don`t sure how correctly this method SAVE game
             await _outputService.SendGameStateById(game.Id);
