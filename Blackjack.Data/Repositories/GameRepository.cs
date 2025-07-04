@@ -2,7 +2,6 @@ using Blackjack.Data.Context;
 using Blackjack.Data.Entities;
 using Blackjack.Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Distributed;
 
 namespace Blackjack.Data.Repositories;
 
@@ -14,6 +13,12 @@ public class GameRepository : IGameRepository
     {
         _contextFactory = contextFactory;
     }
+
+    public async Task Attach(GameEntity entity, CancellationToken cancellationToken = default)
+    {
+        var databaseContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        databaseContext.Games.Attach(entity);
+    }
     
     public async Task Add(GameEntity entity, CancellationToken cancellationToken = default)
     {   
@@ -23,21 +28,14 @@ public class GameRepository : IGameRepository
         await databaseContext.SaveChangesAsync(cancellationToken);
     }
     
-    public async Task SaveGameEntity(GameEntity entity, CancellationToken cancellationToken = default)
+    public async Task Save(GameEntity entity, CancellationToken cancellationToken = default)
     {
         var databaseContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
         
         databaseContext.Games.Attach(entity);
-        await Update(entity, cancellationToken);
+        databaseContext.Update(entity);
     }
-
-    public async void Attach(GameEntity entity)
-    {
-        var databaseContext = await _contextFactory.CreateDbContextAsync();
-
-        databaseContext.Games.Attach(entity);
-    }
-
+    
     public async Task<GameEntity?> GetById(Guid id, CancellationToken cancellationToken = default)
     {
         var databaseContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
@@ -48,19 +46,7 @@ public class GameRepository : IGameRepository
         
         return gameEntity;
     }
-
-    public async Task<GameEntity?> GetByIdAsNoTracking(Guid id, CancellationToken cancellationToken = default)
-    {
-        var databaseContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
-
-        var game = await databaseContext.Games
-            .AsNoTracking()
-            .Include(g => g.Players)
-            .SingleOrDefaultAsync(g => g.Id == id, cancellationToken);
-        
-        return game;
-    }
-
+    
     public async Task<IEnumerable<GameEntity>> GetAll(CancellationToken cancellationToken = default)
     {
         var databaseContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
@@ -71,28 +57,13 @@ public class GameRepository : IGameRepository
         
         return games;
     }
-
-    public async Task Update(GameEntity entity, CancellationToken cancellationToken = default)
-    {
-        var databaseContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
-
-        databaseContext.Games.Update(entity);
-        await Save(cancellationToken);
-    }
-
-    public async Task Save(CancellationToken cancellationToken = default)
-    {
-        var databaseContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
-
-        await databaseContext.SaveChangesAsync(cancellationToken);
-    }
-
+    
     public async Task Delete(GameEntity entity, CancellationToken cancellationToken = default)
     {
         var databaseContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
 
         databaseContext.Games.Remove(entity);
-        await Save(cancellationToken);
+        await databaseContext.SaveChangesAsync(cancellationToken);
     }
 }
 

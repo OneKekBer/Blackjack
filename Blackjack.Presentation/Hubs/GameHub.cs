@@ -13,7 +13,7 @@ public class GameHub : Hub<IGameHubClient>, IGameHub
 {
     private readonly IGameHubService _gameHubService;
     private readonly ILogger<IGameHub> _logger;
-
+    
     public GameHub(IGameHubService gameHubService, ILogger<IGameHub> logger)
     {
         _gameHubService = gameHubService;
@@ -22,7 +22,7 @@ public class GameHub : Hub<IGameHubClient>, IGameHub
     
     public async Task JoinGame(JoinGameRequest request)
     {
-        _logger.LogInformation($"Joining game {request.GameId} {request.UserId}");
+        _logger.LogInformation($"Joining game {request.GameId} {request.UserId} actual coonectionId: {Context.ConnectionId}");
         var isPlayerExists = await _gameHubService.IsPlayerExists(request.UserId, request.GameId);
         var game = await _gameHubService.JoinGame(request.UserId, request.GameId, Context.ConnectionId, Context.ConnectionAborted);
 

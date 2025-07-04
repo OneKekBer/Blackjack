@@ -29,7 +29,7 @@ public class GameHubDispatcher : IGameHubDispatcher
         using var scope = _scopeFactory.CreateScope();
         var gameRepository = scope.ServiceProvider.GetRequiredService<IGameRepository>();
         
-        var gameEntity = await gameRepository.GetByIdAsNoTracking(gameId) 
+        var gameEntity = await gameRepository.GetById(gameId) 
                          ?? throw new NotFoundInDatabaseException("");
         
         var connectionId = gameEntity.Players
@@ -91,7 +91,7 @@ public class GameHubDispatcher : IGameHubDispatcher
         using var scope = _scopeFactory.CreateScope();
         var gameRepository = scope.ServiceProvider.GetRequiredService<IGameRepository>();
         
-        await gameRepository.SaveGameEntity(GameMapper.ModelToEntity(game));
+        await gameRepository.Save(GameMapper.ModelToEntity(game));
     }
 
     public async Task<Game> LoadGame(Guid gameId)
