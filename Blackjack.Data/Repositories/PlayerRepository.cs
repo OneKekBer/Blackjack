@@ -33,14 +33,11 @@ public class PlayerRepository : IPlayerRepository
         return entity;
     }
 
-    public async Task DeleteById(Guid id, CancellationToken cancellationToken = default)
+    public async Task Delete(PlayerEntity entity, CancellationToken cancellationToken = default)
     {
         var databaseContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
-
-        var game = await GetById(id, cancellationToken) 
-                   ?? throw new NotFoundInDatabaseException($"game with id: {id} has not been found PlayerRepository.DeleteById");
         
-        databaseContext.Players.Remove(game);
+        databaseContext.Players.Remove(entity);
         await databaseContext.SaveChangesAsync(cancellationToken);
     }
 
@@ -52,7 +49,7 @@ public class PlayerRepository : IPlayerRepository
         await databaseContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task Save(CancellationToken cancellationToken = default)
+    public async Task Save(PlayerEntity entity, CancellationToken cancellationToken = default)
     {
         var databaseContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
 

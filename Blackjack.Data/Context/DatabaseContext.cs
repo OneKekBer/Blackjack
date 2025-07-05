@@ -22,4 +22,5 @@ public class DatabaseContext : DbContext
     
     public DbSet<GameEntity> Games { get; set; }
     public DbSet<PlayerEntity> Players { get; set; }
+    public DbSet<PlayerConnectionEntity> PlayerConnections { get; set; }
 }
