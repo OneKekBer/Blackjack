@@ -18,11 +18,6 @@ public class CachedGameRepository : IGameRepository
         _memoryCache = memoryCache;
         _logger = logger;
     }
-
-    /*private async Task<GameEntity> GetOrAddCache(Guid id, CancellationToken cancellationToken = default)
-    {
-        
-    }*/
     
     private void AddCache(GameEntity entity)
     {
