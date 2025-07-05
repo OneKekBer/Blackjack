@@ -10,6 +10,4 @@ public interface IGameRepository
     public Task<IEnumerable<GameEntity>> GetAll(CancellationToken cancellationToken = default);
     public Task Delete(GameEntity entity, CancellationToken cancellationToken = default);
     public Task Attach(GameEntity entity, CancellationToken cancellationToken = default);
-
-
 }

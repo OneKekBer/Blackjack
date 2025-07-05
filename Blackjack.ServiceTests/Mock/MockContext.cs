@@ -7,11 +7,11 @@ using Blackjack.Presentation.Hubs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 
 namespace Blackjack.ServiceTests.Mock;
 
-public class MockContext // why mockcontext can init and clear cache?
-                         // idk, its just handy, but if i will have more functionality i will separate logic(i hope)
+public class MockContext
 {
     public IGameService GameService { get; }
     public IMemoryCache Cache { get; set; } = new MemoryCache(new MemoryCacheOptions()
@@ -23,6 +23,8 @@ public class MockContext // why mockcontext can init and clear cache?
     public IDbContextFactory<DatabaseContext> DbContextFactory { get; }
     public IGameRepository GameRepository { get; }
     public IPlayerRepository PlayerRepository { get; }
+
+    private readonly ILoggerFactory _loggerFactory;
 
     public void ClearCache()
     {
@@ -38,21 +40,37 @@ public class MockContext // why mockcontext can init and clear cache?
         ClearCache();
         await databaseContext.Database.EnsureDeletedAsync();
         await databaseContext.Database.EnsureCreatedAsync();
-        
+
         return databaseContext;
     }
-    
+
     public MockContext()
     {
         var options = new DbContextOptionsBuilder<DatabaseContext>()
             .UseInMemoryDatabase("TestInMemoryDatabase")
             .Options;
-        
+
         DbContextFactory = new PooledDbContextFactory<DatabaseContext>(options);
-        
+
         var context = DbContextFactory.CreateDbContext();
-        
-        GameRepository = new CachedGameRepository(new GameRepository(DbContextFactory), Cache, null);
+
+        // Логгер фабрика для тестов
+        _loggerFactory = LoggerFactory.Create(builder =>
+        {
+            builder
+                .SetMinimumLevel(LogLevel.Debug)
+                .AddConsole(); // Можно добавить .AddDebug() или .AddProvider() для тестов
+        });
+
+        var gameRepoLogger = _loggerFactory.CreateLogger<GameRepository>();
+        var cachedGameRepoLogger = _loggerFactory.CreateLogger<CachedGameRepository>();
+
+        GameRepository = new CachedGameRepository(
+            new GameRepository(DbContextFactory, gameRepoLogger),
+            Cache,
+            cachedGameRepoLogger
+        );
+
         PlayerRepository = new PlayerRepository(DbContextFactory);
         PlayerService = new PlayerService(PlayerRepository);
         GameService = new GameService(GameRepository);
