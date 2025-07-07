@@ -2,7 +2,6 @@
 using Blackjack.ConsoleApp.MemmoryStore;
 using Blackjack.ConsoleApp.Services;
 using Blackjack.GameLogic;
-using Blackjack.GameLogic.Models;
 
 var store = new Store();
 var gameEngine = new GameEngine(

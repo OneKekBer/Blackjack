@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using Blackjack.Data.Entities.Interfaces;
 
 namespace Blackjack.Data.Entities;

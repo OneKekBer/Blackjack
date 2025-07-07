@@ -1,7 +1,5 @@
 using Blackjack.Business.Extensions;
 using Blackjack.Business.Services.Interfaces;
-using Blackjack.GameLogic.Models;
-using Blackjack.GameLogic.Types;
 using Blackjack.Presentation.Contracts.Requests;
 using Blackjack.Presentation.Hubs.Interfaces;
 using Blackjack.Presentation.View;

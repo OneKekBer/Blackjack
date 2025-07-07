@@ -23,8 +23,4 @@
       <ProjectReference Include="..\Blackjack.GameLogic\Blackjack.GameLogic.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Other\Extensions\" />
-    </ItemGroup>
-
 </Project>
