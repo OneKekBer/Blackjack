@@ -32,6 +32,12 @@ public class OutputService : IOutputService
         return Task.CompletedTask;
     }
 
+    public Task SendNewTurnPlayerId(Guid gameId, IEnumerable<Player> players, Guid currentPlayerId)
+    {
+        Console.WriteLine($"Turn Player Id:{currentPlayerId}");
+        return Task.CompletedTask;
+    }
+
     public Task SendNewTurnPlayerId(Guid gameId, Guid currentPlayerId)
     {
         return Task.CompletedTask;

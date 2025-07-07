@@ -26,4 +26,10 @@ public class GameHubDispatcherUnitTests
         Assert.True(task.IsCompleted);
         Assert.Equal(expectedAction, actualAction);
     }
+
+    [Fact]
+    public async Task MergePlayers_MergeCorrectly()
+    {
+        var dispatcher = new GameHubDispatcher(null, null);
+    }
 }

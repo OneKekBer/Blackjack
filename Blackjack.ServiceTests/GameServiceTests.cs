@@ -15,21 +15,19 @@ public class GameServiceTests : IClassFixture<MockContext>
     [Fact]
     public async Task Create_WhenCallMethod_CreatesGame()
     {
-        await _mockContext.DatabaseContext.Database.EnsureDeletedAsync();
-        await _mockContext.DatabaseContext.Database.EnsureCreatedAsync();
+        var databaseContext = await _mockContext.InitTest();
         
         //Act
         await _mockContext.GameService.Create();
         
         //Assert
-        Assert.Equal(1, _mockContext.DatabaseContext.Games.Count());
+        Assert.Equal(1, databaseContext.Games.Count());
     }
     
     [Fact]
     public async Task GetAll_WhenCallMethod_GetsEmptyListOfGames()
     {
-        await _mockContext.DatabaseContext.Database.EnsureDeletedAsync();
-        await _mockContext.DatabaseContext.Database.EnsureCreatedAsync();
+        await _mockContext.InitTest();
         
         //Act
         var games = await _mockContext.GameService.GetAll();

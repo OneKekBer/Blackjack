@@ -1,6 +1,5 @@
 using Blackjack.Data.Context;
 using Blackjack.Data.Entities;
-using Blackjack.Data.Other.Exceptions;
 using Blackjack.Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -33,28 +32,18 @@ public class PlayerRepository : IPlayerRepository
         return entity;
     }
 
-    public async Task DeleteById(Guid id, CancellationToken cancellationToken = default)
+    public async Task Delete(PlayerEntity entity, CancellationToken cancellationToken = default)
     {
         var databaseContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
-
-        var game = await GetById(id, cancellationToken) 
-                   ?? throw new NotFoundInDatabaseException($"game with id: {id} has not been found PlayerRepository.DeleteById");
         
-        databaseContext.Players.Remove(game);
+        databaseContext.Players.Remove(entity);
         await databaseContext.SaveChangesAsync(cancellationToken);
     }
-
-    public async Task Update(PlayerEntity entity, CancellationToken cancellationToken = default)
+    
+    public async Task Save(PlayerEntity entity, CancellationToken cancellationToken = default)
     {
         var databaseContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
-
-        databaseContext.Players.Update(entity);
-        await databaseContext.SaveChangesAsync(cancellationToken);
-    }
-
-    public async Task Save(CancellationToken cancellationToken = default)
-    {
-        var databaseContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        entity.UpdatedAt = DateTime.UtcNow;
 
         await databaseContext.SaveChangesAsync(cancellationToken);
     }

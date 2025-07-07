@@ -9,10 +9,12 @@ namespace Blackjack.Business.Services;
 public class GameService : IGameService
 {
     private readonly IGameRepository _gameRepository;
+    private readonly IPlayerConnectionRepository _playerConnectionRepository;
 
-    public GameService(IGameRepository gameRepository)
+    public GameService(IGameRepository gameRepository, IPlayerConnectionRepository playerConnectionRepository)
     {
         _gameRepository = gameRepository;
+        _playerConnectionRepository = playerConnectionRepository;
     }
     
     public async Task Create(CancellationToken cancellationToken = default)
@@ -35,13 +37,5 @@ public class GameService : IGameService
     {
         var games = await _gameRepository.GetAll(cancellationToken);
         return GameMapper.EntityToModel(games);
-    }
-
-    public async Task<IEnumerable<string>> GetPlayersConnectionIds(Guid id, CancellationToken cancellationToken = default)
-    {
-        var gameEntity = await _gameRepository.GetById(id, cancellationToken) 
-                         ?? throw new NotFoundInDatabaseException("");
-        
-        return gameEntity.Players.Select(p => p.ConnectionId);
     }
 }

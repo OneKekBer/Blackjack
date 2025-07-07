@@ -28,7 +28,6 @@ public class PlayerMapperUnitTests
             "TestPlayer",
             1500,
             cardString,
-            "conn123",
             Guid.NewGuid()
 
         );
@@ -42,7 +41,6 @@ public class PlayerMapperUnitTests
         Assert.Equal(entity.Balance, model.Balance);
         Assert.Equal(entity.Role, model.Role);
         Assert.Equal(entity.IsPlaying, model.IsPlaying);
-        Assert.Equal(entity.ConnectionId, model.ConnectionId);
 
         var cards = model.Cards.ToList();
         Assert.Equal(2, cards.Count);
@@ -60,7 +58,6 @@ public class PlayerMapperUnitTests
             id: Guid.NewGuid(),
             name: "John",
             role: Role.User,
-            connectionId: "conn987",
             Guid.NewGuid()
 
         )
@@ -83,7 +80,6 @@ public class PlayerMapperUnitTests
         Assert.Equal(player.Balance, entity.Balance);
         Assert.Equal(player.Role, entity.Role);
         Assert.Equal(player.IsPlaying, entity.IsPlaying);
-        Assert.Equal(player.ConnectionId, entity.ConnectionId);
 
         _testOutputHelper.WriteLine(entity.Cards);
         Assert.Equal("2-2 3-7", entity.Cards); // 2-2 = Heart-Queen, 3-7 = Spade-Seven

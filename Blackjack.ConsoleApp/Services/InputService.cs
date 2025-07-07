@@ -5,7 +5,7 @@ namespace Blackjack.ConsoleApp.Services;
 
 public class InputService : IInputService
 {
-    public async Task<PlayerAction> GetPlayerAction(Guid gameId, Guid playerId)
+    public Task<PlayerAction> GetPlayerAction(Guid gameId, Guid playerId)
     {
         string? playerAction = default;
         Console.WriteLine("0 - Hit, 1 - Stand");
@@ -16,6 +16,6 @@ public class InputService : IInputService
         
         var actionIndex = int.TryParse(playerAction, out var index) ? index : throw new FormatException(); // create better input
 
-        return (PlayerAction)actionIndex;
+        return Task.FromResult((PlayerAction)actionIndex);
     }
 }

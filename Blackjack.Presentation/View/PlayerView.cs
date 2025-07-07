@@ -14,7 +14,6 @@ public class PlayerView
         Name = player.Name;
         Balance = player.Balance;
         Score = player.Cards.GetScore();
-        ConnectionId = player.ConnectionId;
         UserId = player.UserId;
         Cards = player.Cards;
     }
@@ -26,6 +25,5 @@ public class PlayerView
     public int Balance { get; } = 1000;
     public List<Card> Cards { get; } = new List<Card>();
     public int Score { get; } = 0;
-    public string ConnectionId { get; }
     public Guid? UserId { get; }
 }

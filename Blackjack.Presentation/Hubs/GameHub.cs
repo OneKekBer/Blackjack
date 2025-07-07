@@ -1,4 +1,7 @@
+using Blackjack.Business.Extensions;
 using Blackjack.Business.Services.Interfaces;
+using Blackjack.GameLogic.Models;
+using Blackjack.GameLogic.Types;
 using Blackjack.Presentation.Contracts.Requests;
 using Blackjack.Presentation.Hubs.Interfaces;
 using Blackjack.Presentation.View;
@@ -12,17 +15,19 @@ namespace Blackjack.Presentation.Hubs;
 public class GameHub : Hub<IGameHubClient>, IGameHub
 {
     private readonly IGameHubService _gameHubService;
+    private readonly IPlayerConnectionService _playerConnectionService;
     private readonly ILogger<IGameHub> _logger;
-
-    public GameHub(IGameHubService gameHubService, ILogger<IGameHub> logger)
+    
+    public GameHub(IGameHubService gameHubService, IPlayerConnectionService playerConnectionService, ILogger<IGameHub> logger)
     {
         _gameHubService = gameHubService;
+        _playerConnectionService = playerConnectionService;
         _logger = logger;
     }
     
     public async Task JoinGame(JoinGameRequest request)
     {
-        _logger.LogInformation($"Joining game {request.GameId} {request.UserId}");
+        _logger.LogInformation($"Joining game {request.GameId} {request.UserId} actual coonectionId: {Context.ConnectionId}");
         var isPlayerExists = await _gameHubService.IsPlayerExists(request.UserId, request.GameId);
         var game = await _gameHubService.JoinGame(request.UserId, request.GameId, Context.ConnectionId, Context.ConnectionAborted);
 
@@ -38,10 +43,7 @@ public class GameHub : Hub<IGameHubClient>, IGameHub
             return;
         }
         
-        var connectionIds = game.Players
-            .Where(p => !string.IsNullOrEmpty(p.ConnectionId))
-            .Select(p => p.ConnectionId)
-            .ToList();
+        var connectionIds = await _playerConnectionService.GetPlayerConnectionId(game.Players.GetPlayersIds());
 
         await Clients.Client(Context.ConnectionId).SendNewGame(new GameView(game));
         await Clients.Clients(connectionIds).SendGameState(new GameView(game));
@@ -50,10 +52,8 @@ public class GameHub : Hub<IGameHubClient>, IGameHub
     public async Task StartGame(StartGameRequest request)
     {
         var game = await _gameHubService.StartGame(request.GameId, Context.ConnectionAborted);
-        var connectionIds = game.Players
-            .Where(p => !string.IsNullOrEmpty(p.ConnectionId))
-            .Select(p => p.ConnectionId)
-            .ToList();
+        
+        var connectionIds = await _playerConnectionService.GetPlayerConnectionId(game.Players.GetPlayersIds());
         
         await Clients.Clients(connectionIds).SendGameState(new GameView(game));
     }
@@ -69,11 +69,9 @@ public class GameHub : Hub<IGameHubClient>, IGameHub
         var game = await _gameHubService.AddBotToLobby(request.GameId, request.PlayerId, Context.ConnectionAborted);
         if (game == null)
             await Clients.Client(Context.ConnectionId).SendError($"You cant add bot to lobby, or lobby is full, or game is started");
-        
-        var connectionIds = game.Players
-            .Where(p => !string.IsNullOrEmpty(p.ConnectionId))
-            .Select(p => p.ConnectionId)
-            .ToList();
+
+       
+        var connectionIds = await _playerConnectionService.GetPlayerConnectionId(game.Players.GetPlayersIds());
         
         await Clients.Clients(connectionIds).SendGameState(new GameView(game));
     }
