@@ -20,6 +20,7 @@ public class PlayerConnectionService : IPlayerConnectionService
                          ?? throw new NotFoundInDatabaseException("");
         
         connection.ConnectionId = newConnectionId;
+        connection.LastUpdated = DateTime.UtcNow;
         await _connectionRepository.Save(connection, cancellationToken);
     }
 

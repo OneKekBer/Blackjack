@@ -46,7 +46,10 @@ public class GameHubService : IGameHubService
             if (existingPlayer is null)
             {
                 var playerId = Guid.NewGuid();
-                var newPlayer = new Player(playerId, $"Player: {playerId.ToString().Substring(0, 4)}", Role.User, userId);
+                var newPlayer = new Player(playerId, $"Player:{playerId.ToString().Substring(0, 4)}", Role.User, userId);
+                if (gameEntity.Status == GameStatus.Started)
+                    newPlayer.IsPlaying = false;
+                
                 var newPlayerEntity = PlayerMapper.ModelToEntity(newPlayer);
                 await _playerConnectionService.AddNewPlayerConnection(playerId, connectionId, cancellationToken);
                 await _playerRepository.Add(newPlayerEntity, cancellationToken);

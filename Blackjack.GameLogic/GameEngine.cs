@@ -76,8 +76,8 @@ public class GameEngine
             game.TurnQueue.Dequeue();
             await _gamePersisterService.SaveGame(game);
             HandlePlayerAction(currentPlayer, action, game);
-            
-            await _gamePersisterService.SaveGame(game); // i don`t sure how correctly this method SAVE game
+
+            await _gamePersisterService.SaveGame(game);
             await _outputService.SendGameState(game);
         }
     }
@@ -104,7 +104,7 @@ public class GameEngine
 
             var message = MessagesGenerator.GenerateResultMessage(winnersName);
             await _outputService.SendResult(game.Id, message, game.Players);
-            
+            //checkOnNewPlayersMethod?  
             GameHandler.ResetGame(game);
             
             await _gamePersisterService.SaveGame(game);

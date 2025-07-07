@@ -85,12 +85,31 @@ public class GameHubDispatcher : IGameHubDispatcher
         }
     }
 
-    public async Task SaveGame(Game game)
+    private List<Player> MergePlayers(IEnumerable<Player> currentPlayers, IEnumerable<Player> freshPlayers)
+    {
+        var result = new List<Player>(currentPlayers);
+        
+        var currentPlayerIds = currentPlayers.GetPlayersIds().ToHashSet();
+        var newPlayers = freshPlayers
+            .Where(p => p.Role == Role.User)
+            .Where(p => !currentPlayerIds.Contains(p.Id));
+    
+        result.AddRange(newPlayers);
+        return result;
+    }
+
+    public async Task SaveGame(Game currentGame)
     {
         using var scope = _scopeFactory.CreateScope();
         var gameRepository = scope.ServiceProvider.GetRequiredService<IGameRepository>();
+
+        var freshGameEntity = await gameRepository.GetById(currentGame.Id) 
+                              ?? throw new NotFoundInDatabaseException("");
+        var freshGame = GameMapper.EntityToModel(freshGameEntity);
         
-        await gameRepository.Save(GameMapper.ModelToEntity(game));
+        currentGame.Players = MergePlayers(currentGame.Players, freshGame.Players);
+        
+        await gameRepository.Save(GameMapper.ModelToEntity(currentGame));
     }
 
     public async Task<Game> LoadGame(Guid gameId)
