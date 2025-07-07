@@ -1,4 +1,15 @@
 ﻿using Blackjack.ConsoleApp;
+using Blackjack.ConsoleApp.MemmoryStore;
+using Blackjack.ConsoleApp.Services;
+using Blackjack.GameLogic;
+using Blackjack.GameLogic.Models;
 
-var ca = new ConsoleApp();
-ca.Main();
+var store = new Store();
+var gameEngine = new GameEngine(
+    new InputService(),
+    new OutputService(),
+    new GamePersisterService(store)
+);
+var gameRunner = new GameRunner(gameEngine, store);
+
+await gameRunner.StartGameAsync();

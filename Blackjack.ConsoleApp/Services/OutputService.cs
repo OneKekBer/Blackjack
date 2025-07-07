@@ -34,7 +34,8 @@ public class OutputService : IOutputService
 
     public Task SendNewTurnPlayerId(Guid gameId, IEnumerable<Player> players, Guid currentPlayerId)
     {
-        throw new NotImplementedException();
+        Console.WriteLine($"Turn Player Id:{currentPlayerId}");
+        return Task.CompletedTask;
     }
 
     public Task SendNewTurnPlayerId(Guid gameId, Guid currentPlayerId)

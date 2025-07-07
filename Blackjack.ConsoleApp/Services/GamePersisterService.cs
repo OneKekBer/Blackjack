@@ -1,3 +1,4 @@
+using Blackjack.ConsoleApp.MemmoryStore;
 using Blackjack.GameLogic.Interfaces;
 using Blackjack.GameLogic.Models;
 
@@ -5,18 +6,27 @@ namespace Blackjack.ConsoleApp.Services;
 
 public class GamePersisterService : IGamePersisterService
 {
-    public async Task SaveGame(Game game)
+    private readonly Store _store;
+
+    public GamePersisterService(Store store)
     {
-        return;
+        _store = store;
+    }
+
+    public Task SaveGame(Game game)
+    {
+        _store.Update(game);
+        return Task.CompletedTask;
     }
 
     public Task<Game> LoadGame(Guid gameId)
     {
-        throw new NotImplementedException();
+        return Task.FromResult(_store.GetById(gameId));
     }
 
-    public async Task SaveGameAndSendState(Game game)
+    public Task SaveGameAndSendState(Game game)
     {
-        return;
+        _store.Update(game);
+        return Task.CompletedTask;
     }
 }
