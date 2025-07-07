@@ -70,7 +70,7 @@ public class GameEngine
             if (currentPlayer == null || !currentPlayer.IsPlaying)
                 continue;
             
-            await _outputService.SendNewTurnPlayerId(game.Id, currentPlayerId);
+            await _outputService.SendNewTurnPlayerId(game.Id, game.Players, currentPlayerId);
             
             var action = await GetPlayerAction(currentPlayer, game.Id);
             game.TurnQueue.Dequeue();

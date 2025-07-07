@@ -13,14 +13,19 @@ public class PlayerService : IPlayerService
         _playerRepository = playerRepository;
     }
 
-    public async Task ChangePlayerName(Guid playerId, Guid gameId, Guid userId, string newName)
+    public async Task ChangePlayerName(Guid playerId, Guid gameId, Guid userId, string newName, CancellationToken cancellationToken = default)
     {
-        var player = await _playerRepository.GetById(playerId);
+        var player = await _playerRepository.GetById(playerId, cancellationToken);
         
         if(player is null || player.UserId != userId)
             throw new RenameProblemException($"Player with id {playerId} does not exist, or you dont have permission to rename the player.");
         
         player.Name = newName;
-        await _playerRepository.Save(player);
+        await _playerRepository.Save(player, cancellationToken);
+    }
+    
+    public Task AddBot(CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
     }
 }

@@ -37,7 +37,6 @@ public class GameHubServiceTests : IClassFixture<MockContext>
         // Assert
         var gameEntity = GameMapper.ModelToEntity(gameModel);
         Assert.Single(gameEntity.Players);
-        Assert.Equal(connectionId, gameEntity.Players[0].ConnectionId);
     }
 
     [Fact]
@@ -47,17 +46,16 @@ public class GameHubServiceTests : IClassFixture<MockContext>
 
         // Arrange
         var playerId = Guid.NewGuid();
-        var connectionId = "abc123";
         var gameId = Guid.NewGuid();
 
-        var existingPlayer = new Player(playerId, "Test", Role.User, connectionId, Guid.NewGuid());
+        var existingPlayer = new Player(playerId, "Test", Role.User, Guid.NewGuid());
         var game = new Game(new List<Player>(), gameId);
 
         await _mockContext.PlayerRepository.Add(PlayerMapper.ModelToEntity(existingPlayer));
         await _mockContext.GameRepository.Add(GameMapper.ModelToEntity(game));
         databaseContext.ChangeTracker.Clear();
         // Act
-        await _mockContext.GameHubService.JoinGame(playerId, gameId, connectionId);
+        await _mockContext.GameHubService.JoinGame(playerId, gameId, "connection");
 
         // Assert
         var gameEntity = await _mockContext.GameRepository.GetById(gameId);
@@ -67,6 +65,8 @@ public class GameHubServiceTests : IClassFixture<MockContext>
     [Fact]
     public async Task JoinGame_WhenThreeDifferentPlayersJoin_AllAreAddedCorrectly()
     {
+        await _mockContext.InitTest();
+
         // Arrange
         var gameId = Guid.NewGuid();
         var game = new Game(new List<Player>(), gameId);
@@ -93,7 +93,6 @@ public class GameHubServiceTests : IClassFixture<MockContext>
         for (int i = 0; i < 3; i++)
         {
             var player = gameEntity.Players.First(p => p.UserId == userIds[i]);
-            Assert.Equal(connectionIds[i], player.ConnectionId);
         }
     }
     
@@ -103,8 +102,8 @@ public class GameHubServiceTests : IClassFixture<MockContext>
         var databaseContext = await _mockContext.InitTest();
 
         //arrange
-        var p1 = new Player(Guid.NewGuid(), "A", Role.User, "", null);
-        var p2 = new Player(Guid.NewGuid(), "B", Role.User, "", null);
+        var p1 = new Player(Guid.NewGuid(), "A", Role.User, null);
+        var p2 = new Player(Guid.NewGuid(), "B", Role.User, null);
         var gameId = Guid.NewGuid();
         var gameToDatabase = new Game([p1, p2], gameId);
         var gameEngine = new GameEngine(null, null, null);
@@ -131,8 +130,8 @@ public class GameHubServiceTests : IClassFixture<MockContext>
         var databaseContext = await _mockContext.InitTest();
         
         //Arrange
-        var p1 = new Player(Guid.NewGuid(), "A", Role.User, "", null);
-        var p2 = new Player(Guid.NewGuid(), "B", Role.User, "", null);
+        var p1 = new Player(Guid.NewGuid(), "A", Role.User, null);
+        var p2 = new Player(Guid.NewGuid(), "B", Role.User, null);
         var gameId = Guid.NewGuid();
         var gameToDatabase = new Game([p1, p2], gameId);
         var gameEngine = new GameEngine(null, null, null);
@@ -147,7 +146,7 @@ public class GameHubServiceTests : IClassFixture<MockContext>
         var game = GameMapper.EntityToModel(gameEntity!);
         
         var botId = Guid.NewGuid();
-        var bot = new Player(botId, $"Bot:{botId}", Role.Bot, "", null);
+        var bot = new Player(botId, $"Bot:{botId}", Role.Bot, null);
         var botEntity = PlayerMapper.ModelToEntity(bot);
         
         //await _mockContext.PlayerRepository.Add(botEntity, CancellationToken.None);
@@ -172,8 +171,8 @@ public class GameHubServiceTests : IClassFixture<MockContext>
         await databaseContext.Database.EnsureDeletedAsync();
         await databaseContext.Database.EnsureCreatedAsync();
 
-        var p1 = new Player(Guid.NewGuid(), "A", Role.User, "", null);
-        var p2 = new Player(Guid.NewGuid(), "B", Role.User, "", null);
+        var p1 = new Player(Guid.NewGuid(), "A", Role.User, null);
+        var p2 = new Player(Guid.NewGuid(), "B", Role.User, null);
         var gameId = Guid.NewGuid();
         var gameToDatabase = new Game([p1, p2], gameId);
         

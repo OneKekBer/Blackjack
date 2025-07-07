@@ -1,7 +1,6 @@
 using Blackjack.Data.Entities;
 using Blackjack.Data.Other.Exceptions;
 using Blackjack.Data.Repositories.Interfaces;
-using Blackjack.GameLogic.Types;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 
@@ -63,7 +62,6 @@ public class CachedGameRepository : IGameRepository
 
     public async Task Save(GameEntity entity, CancellationToken cancellationToken = default)
     {
-        Console.WriteLine(entity.Players.First(e => e.Role == Role.User).ConnectionId);
         AddCache(entity);
         await _gameRepository.Save(entity, cancellationToken);
     }

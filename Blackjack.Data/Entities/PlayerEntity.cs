@@ -10,7 +10,7 @@ public class PlayerEntity : Entity
         
     }
     
-    public PlayerEntity(Guid id, bool isPlaying, Role role, string name, int balance, string cards, string connectionId, Guid? userId)
+    public PlayerEntity(Guid id, bool isPlaying, Role role, string name, int balance, string cards, Guid? userId)
     {
         Id = id;
         IsPlaying = isPlaying;
@@ -18,7 +18,6 @@ public class PlayerEntity : Entity
         Name = name;
         Balance = balance;
         Cards = cards;
-        ConnectionId = connectionId;
         UserId = userId;
     }
     
@@ -27,7 +26,5 @@ public class PlayerEntity : Entity
     public string Name { get; set; }
     public int Balance { get; set; } = 1000;
     public string Cards { get; set; } = default!;
-    public string ConnectionId { get; set; } = default!;
     public Guid? UserId { get; set; }
-    
 }

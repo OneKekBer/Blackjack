@@ -12,7 +12,7 @@ namespace Blackjack.Business.Services;
 public class GameHubService : IGameHubService
 {
     private readonly IPlayerRepository _playerRepository;
-    private readonly IPlayerService _playerService;
+    private readonly IPlayerConnectionService _playerConnectionService;
     private readonly IGameRepository _gameRepository;
     private readonly IGameHubDispatcher _gameHubDispatcher; 
     private readonly GameEngine _gameEngine;
@@ -21,14 +21,13 @@ public class GameHubService : IGameHubService
     public GameHubService
     (
         IPlayerRepository playerRepository,
-        IPlayerService playerService,
         IGameRepository gameRepository,
-        IGameHubDispatcher gameHubDispatcher)
+        IGameHubDispatcher gameHubDispatcher, IPlayerConnectionService playerConnectionService)
     {
         _playerRepository = playerRepository;
-        _playerService = playerService;
         _gameRepository = gameRepository;
         _gameHubDispatcher = gameHubDispatcher;
+        _playerConnectionService = playerConnectionService;
         _gameEngine = new GameEngine(gameHubDispatcher, gameHubDispatcher, gameHubDispatcher);
     }
     
@@ -47,14 +46,15 @@ public class GameHubService : IGameHubService
             if (existingPlayer is null)
             {
                 var playerId = Guid.NewGuid();
-                var newPlayer = new Player(playerId, $"Player: {playerId.ToString().Substring(0, 4)}", Role.User, connectionId, userId);
+                var newPlayer = new Player(playerId, $"Player: {playerId.ToString().Substring(0, 4)}", Role.User, userId);
                 var newPlayerEntity = PlayerMapper.ModelToEntity(newPlayer);
+                await _playerConnectionService.AddNewPlayerConnection(playerId, connectionId, cancellationToken);
                 await _playerRepository.Add(newPlayerEntity, cancellationToken);
                 gameEntity.Players.Add(newPlayerEntity);
             }
             else
             {
-                existingPlayer.ConnectionId = connectionId;
+                await _playerConnectionService.ChangePlayerConnectionId(existingPlayer.Id, connectionId, cancellationToken);   
             }
             await _gameRepository.Save(gameEntity, cancellationToken);
             
@@ -76,7 +76,7 @@ public class GameHubService : IGameHubService
             .Any(p => p.UserId == userId);
     }
 
-    public async Task GetPlayerAction(Guid gameId, Guid playerId, PlayerAction action, CancellationToken cancellationToken)
+    public async Task GetPlayerAction(Guid gameId, Guid playerId, PlayerAction action, CancellationToken cancellationToken = default)
     {
         var gameEntity = await _gameRepository.GetById(gameId, cancellationToken) 
                    ?? throw new NotFoundInDatabaseException($"In getting player action in game with id: {gameId} has not been found");
@@ -101,7 +101,7 @@ public class GameHubService : IGameHubService
             return null;
 
         var botId = Guid.NewGuid();
-        var bot = new Player(botId, $"Bot:{botId.ToString().Substring(0, 4)}", Role.Bot, "", null);
+        var bot = new Player(botId, $"Bot:{botId.ToString().Substring(0, 4)}", Role.Bot, null);
         var botEntity = PlayerMapper.ModelToEntity(bot);
 
         await _playerRepository.Add(botEntity, cancellationToken);
@@ -111,7 +111,7 @@ public class GameHubService : IGameHubService
         return GameMapper.EntityToModel(gameEntity);
     }
     
-    public async Task<Game> StartGame(Guid gameId, CancellationToken cancellationToken)
+    public async Task<Game> StartGame(Guid gameId, CancellationToken cancellationToken = default)
     {
         var gameEntity = await _gameRepository.GetById(gameId, cancellationToken)  // take entity from db
                          ?? throw new NotFoundInDatabaseException($"In starting game with id: {gameId} has not been found");

@@ -1,7 +1,6 @@
 using Blackjack.Data.Context;
 using Blackjack.Data.Entities;
 using Blackjack.Data.Repositories.Interfaces;
-using Blackjack.GameLogic.Types;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -35,7 +34,7 @@ public class GameRepository : IGameRepository
     public async Task Save(GameEntity entity, CancellationToken cancellationToken = default)
     {
         var databaseContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
-        _logger.LogDebug(entity.Players.First(p => p.Role == Role.User).ConnectionId);
+        
         /*
             databaseContext.Games.Attach(entity);
             databaseContext.Update(entity);

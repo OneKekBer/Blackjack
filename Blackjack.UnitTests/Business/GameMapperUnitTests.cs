@@ -21,7 +21,6 @@ public class GameMapperUnitTests
             "Alice",
             1500,
             "0-0 1-1",
-            "conn123",
             Guid.NewGuid()
         );
 
@@ -89,7 +88,6 @@ public class GameMapperUnitTests
             id: playerId,
             name: "Dealer",
             role: Role.User,
-            connectionId: "conn456",
             Guid.NewGuid()
         )
         {

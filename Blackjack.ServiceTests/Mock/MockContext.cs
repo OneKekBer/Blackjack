@@ -23,9 +23,11 @@ public class MockContext
     public IDbContextFactory<DatabaseContext> DbContextFactory { get; }
     public IGameRepository GameRepository { get; }
     public IPlayerRepository PlayerRepository { get; }
-
     private readonly ILoggerFactory _loggerFactory;
-
+    public IPlayerConnectionRepository PlayerConnectionRepository { get; }
+    public IPlayerConnectionService PlayerConnectionService { get; }
+    
+    
     public void ClearCache()
     {
         Cache = new MemoryCache(new MemoryCacheOptions()
@@ -61,7 +63,7 @@ public class MockContext
                 .SetMinimumLevel(LogLevel.Debug)
                 .AddConsole(); // Можно добавить .AddDebug() или .AddProvider() для тестов
         });
-
+        
         var gameRepoLogger = _loggerFactory.CreateLogger<GameRepository>();
         var cachedGameRepoLogger = _loggerFactory.CreateLogger<CachedGameRepository>();
 
@@ -70,12 +72,13 @@ public class MockContext
             Cache,
             cachedGameRepoLogger
         );
-
+        PlayerConnectionRepository = new PlayerConnectionRepository(DbContextFactory);
+        PlayerConnectionService = new PlayerConnectionService(PlayerConnectionRepository);
         PlayerRepository = new PlayerRepository(DbContextFactory);
         PlayerService = new PlayerService(PlayerRepository);
-        GameService = new GameService(GameRepository);
+        GameService = new GameService(GameRepository, null);
 
         var gameHubDispatcher = new GameHubDispatcher(null, null);
-        GameHubService = new GameHubService(PlayerRepository, PlayerService, GameRepository, gameHubDispatcher);
+        GameHubService = new GameHubService(PlayerRepository, GameRepository, gameHubDispatcher, PlayerConnectionService);
     }
 }

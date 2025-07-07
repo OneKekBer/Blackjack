@@ -19,12 +19,14 @@ public class PlayerConnectionRepository : IPlayerConnectionRepository
         var databaseContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
 
         await databaseContext.PlayerConnections.AddAsync(entity, cancellationToken);
+        await databaseContext.SaveChangesAsync(cancellationToken);
     }
 
     public async Task Delete(PlayerConnectionEntity entity, CancellationToken cancellationToken = default)
     {
         var databaseContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
         databaseContext.PlayerConnections.Remove(entity);
+        await databaseContext.SaveChangesAsync(cancellationToken);
     }
 
     public async Task<PlayerConnectionEntity?> GetById(Guid id, CancellationToken cancellationToken = default)
@@ -36,9 +38,11 @@ public class PlayerConnectionRepository : IPlayerConnectionRepository
         return entity;
     }
 
-    public Task Save(PlayerConnectionEntity entity, CancellationToken cancellationToken = default)
+    public async Task Save(PlayerConnectionEntity entity, CancellationToken cancellationToken = default)// i didnt think while i was writing des meth 
     {
-        throw new NotImplementedException();
+        var databaseContext = await _contextFactory.CreateDbContextAsync(cancellationToken); 
+        databaseContext.PlayerConnections.Update(entity);
+        await databaseContext.SaveChangesAsync(cancellationToken);
     }
 
     public async Task<PlayerConnectionEntity?> GetByPlayerId(Guid id, CancellationToken cancellationToken = default)

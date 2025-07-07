@@ -4,12 +4,11 @@ namespace Blackjack.GameLogic.Models;
 
 public class Player
 {
-    public Player(Guid id, string name, Role role, string connectionId, Guid? userId)
+    public Player(Guid id, string name, Role role, Guid? userId)
     {
         Id = id;
         Role = role;
         Name = name;
-        ConnectionId = connectionId;
         UserId = userId;
     }
 
@@ -19,6 +18,5 @@ public class Player
     public string Name { get; }
     public int Balance { get; set; } = 1000;
     public List<Card> Cards { get; init; } = new List<Card>();
-    public string ConnectionId { get; set; }
     public Guid? UserId { get; set; }
 }

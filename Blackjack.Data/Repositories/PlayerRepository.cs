@@ -1,6 +1,5 @@
 using Blackjack.Data.Context;
 using Blackjack.Data.Entities;
-using Blackjack.Data.Other.Exceptions;
 using Blackjack.Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 

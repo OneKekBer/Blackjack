@@ -21,10 +21,10 @@ public class GameHubDispatcherServiceTests : IClassFixture<MockContext>
     public async Task SaveGame_WhenSaveGame_DataSavesCorrectly()
     {
         var databaseContext = await _mockContext.InitTest();
+        
         //Arrange
-
-        var p1 = new Player(Guid.NewGuid(), "A", Role.User, "", null);
-        var p2 = new Player(Guid.NewGuid(), "B", Role.User, "", null);
+        var p1 = new Player(Guid.NewGuid(), "A", Role.User, null);
+        var p2 = new Player(Guid.NewGuid(), "B", Role.User, null);
         var gameId = Guid.NewGuid();
         var game = new Game([p1, p2], gameId);
     
@@ -61,5 +61,4 @@ public class GameHubDispatcherServiceTests : IClassFixture<MockContext>
         Assert.Equal(cardB, updatedPlayerB.Cards.First());
         Assert.Equal(1500, updatedPlayerA.Balance);
     }
-
 }

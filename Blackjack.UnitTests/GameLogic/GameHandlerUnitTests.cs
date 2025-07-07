@@ -19,8 +19,8 @@ public class GameHandlerUnitTests
     public void GetWinnersId_WhenOneWinner_ReturnsCorrectPlayerId()
     {
         // Arrange
-        var winner = new Player(Guid.NewGuid(), "A", Role.User, "", null);
-        var loser = new Player(Guid.NewGuid(), "B", Role.User, "", null);
+        var winner = new Player(Guid.NewGuid(), "A", Role.User, null);
+        var loser = new Player(Guid.NewGuid(), "B", Role.User, null);
 
         winner.Cards.Add(new Card(Suits.Club, Rank.Ten));
         winner.Cards.Add(new Card(Suits.Heart, Rank.Nine)); // Score: 19
@@ -41,8 +41,8 @@ public class GameHandlerUnitTests
     public void GetWinnersId_WhenMultipleWinners_ReturnsAllCorrectIds()
     {
         // Arrange
-        var p1 = new Player(Guid.NewGuid(), "A", Role.User, "", null);
-        var p2 = new Player(Guid.NewGuid(), "B", Role.User, "", null);
+        var p1 = new Player(Guid.NewGuid(), "A", Role.User, null);
+        var p2 = new Player(Guid.NewGuid(), "B", Role.User, null);
         p1.Cards.Add(new Card(Suits.Club, Rank.King)); 
         p2.Cards.Add(new Card(Suits.Heart, Rank.King));
 
@@ -61,7 +61,7 @@ public class GameHandlerUnitTests
     public void ResetGame_ClearsPlayerCardsAndDeck()
     {
         // Arrange
-        var player = new Player(Guid.NewGuid(), "A", Role.User, "", null);
+        var player = new Player(Guid.NewGuid(), "A", Role.User, null);
         player.Cards.Add(new Card(Suits.Club, Rank.Ten));
         player.IsPlaying = false;
 
@@ -81,8 +81,8 @@ public class GameHandlerUnitTests
     public void GivePrizes_DistributesPotToWinners()
     {
         // Arrange
-        var p1 = new Player(Guid.NewGuid(), "A", Role.User, "", null);
-        var p2 = new Player(Guid.NewGuid(), "B", Role.User, "", null);
+        var p1 = new Player(Guid.NewGuid(), "A", Role.User, null);
+        var p2 = new Player(Guid.NewGuid(), "B", Role.User, null);
         var game = new Game(new List<Player> { p1, p2 }, Guid.NewGuid());
 
         var winners = new List<Guid> { p1.Id };
@@ -101,8 +101,8 @@ public class GameHandlerUnitTests
         // Arrange
         var players = new List<Player>
         {
-            new Player(Guid.NewGuid(), "A", Role.User, "", null) { IsPlaying = true },
-            new Player(Guid.NewGuid(), "B", Role.User, "", null) { IsPlaying = true }
+            new Player(Guid.NewGuid(), "A", Role.User, null) { IsPlaying = true },
+            new Player(Guid.NewGuid(), "B", Role.User, null) { IsPlaying = true }
         };
 
         // Act
