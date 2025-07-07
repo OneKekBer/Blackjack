@@ -85,7 +85,7 @@ public class GameHubDispatcher : IGameHubDispatcher
         }
     }
 
-    private List<Player> MergePlayers(IEnumerable<Player> currentPlayers, IEnumerable<Player> freshPlayers)
+    private List<Player> MergePlayers(IEnumerable<Player> currentPlayers, IEnumerable<Player> freshPlayers) //maybe i should separate this 
     {
         var result = new List<Player>(currentPlayers);
         
@@ -108,7 +108,7 @@ public class GameHubDispatcher : IGameHubDispatcher
         var freshGame = GameMapper.EntityToModel(freshGameEntity);
         
         currentGame.Players = MergePlayers(currentGame.Players, freshGame.Players);
-        
+
         await gameRepository.Save(GameMapper.ModelToEntity(currentGame));
     }
 

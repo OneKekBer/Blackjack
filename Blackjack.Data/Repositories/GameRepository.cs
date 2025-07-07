@@ -34,7 +34,7 @@ public class GameRepository : IGameRepository
     public async Task Save(GameEntity entity, CancellationToken cancellationToken = default)
     {
         var databaseContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
-        
+        entity.UpdatedAt = DateTime.UtcNow;
         /*
             databaseContext.Games.Attach(entity);
             databaseContext.Update(entity);

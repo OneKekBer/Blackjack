@@ -14,12 +14,13 @@ public class ConsoleApp
             new OutputService(),
             new GamePersisterService()
             );
+        var gameId = Guid.NewGuid();
         gameEngine.InitGame(new Game(new List<Player>() 
         {
-            new Player(Guid.NewGuid(),"WOW", Role.User,"", Guid.NewGuid()),
-            new Player(Guid.NewGuid(), "BOT NUM1", Role.Bot, "", null),
+            new Player(Guid.NewGuid(),"WOW", Role.User, Guid.NewGuid()),
+            new Player(Guid.NewGuid(), "BOT NUM1", Role.Bot, null),
 
-        }, Guid.NewGuid()));
-        gameEngine.Start();
+        }, gameId));
+        gameEngine.Start(gameId);
     }
 }

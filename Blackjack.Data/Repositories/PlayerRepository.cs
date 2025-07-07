@@ -39,18 +39,11 @@ public class PlayerRepository : IPlayerRepository
         databaseContext.Players.Remove(entity);
         await databaseContext.SaveChangesAsync(cancellationToken);
     }
-
-    public async Task Update(PlayerEntity entity, CancellationToken cancellationToken = default)
-    {
-        var databaseContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
-
-        databaseContext.Players.Update(entity);
-        await databaseContext.SaveChangesAsync(cancellationToken);
-    }
-
+    
     public async Task Save(PlayerEntity entity, CancellationToken cancellationToken = default)
     {
         var databaseContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        entity.UpdatedAt = DateTime.UtcNow;
 
         await databaseContext.SaveChangesAsync(cancellationToken);
     }

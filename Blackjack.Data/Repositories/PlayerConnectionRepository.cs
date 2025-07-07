@@ -41,6 +41,7 @@ public class PlayerConnectionRepository : IPlayerConnectionRepository
     public async Task Save(PlayerConnectionEntity entity, CancellationToken cancellationToken = default)// i didnt think while i was writing des meth 
     {
         var databaseContext = await _contextFactory.CreateDbContextAsync(cancellationToken); 
+        entity.UpdatedAt = DateTime.UtcNow;
         databaseContext.PlayerConnections.Update(entity);
         await databaseContext.SaveChangesAsync(cancellationToken);
     }

@@ -62,6 +62,7 @@ public class CachedGameRepository : IGameRepository
 
     public async Task Save(GameEntity entity, CancellationToken cancellationToken = default)
     {
+        entity.UpdatedAt = DateTime.UtcNow;
         AddCache(entity);
         await _gameRepository.Save(entity, cancellationToken);
     }
