@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+using System.Linq;
 using Blackjack.ServiceTests.Mock;
 using Xunit;
 
