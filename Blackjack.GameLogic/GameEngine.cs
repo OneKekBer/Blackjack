@@ -48,8 +48,10 @@ public class GameEngine
             
             return;
         }
-        game.TurnQueue.Enqueue(player.Id);
         player.Cards.Add(GameHandler.GetCard(game.Deck));
+        
+        if(player.Cards.GetScore() <= 21)
+            game.TurnQueue.Enqueue(player.Id);
 
         if (player.Role == Role.Bot) return;
         

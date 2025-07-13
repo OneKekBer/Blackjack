@@ -3,7 +3,7 @@ namespace Blackjack.GameLogic.Other;
 public static class Constants
 {
     public const int Limit = 21;
-
+    
     public static readonly Dictionary<string, int> RankValues = new ()
     {
         { "Ace", 11 },
