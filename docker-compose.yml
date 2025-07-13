@@ -6,7 +6,9 @@ networks:
 services:
   client:
     container_name: blackjack-client
-    image: blackjack-client
+    build:
+      context: ./Blackjack.Client
+      dockerfile: Dockerfile
     ports:
       - "8000:80"
     depends_on:
@@ -18,7 +20,7 @@ services:
     container_name: blackjack.server
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: ./Blackjack.Presentation/Dockerfile
     environment:
       - ConnectionStrings__ContainerDatabase=Host=db;Port=5432;Database=blackjack;Username=postgres;Password=1234;Include Error Detail=true
     ports:
