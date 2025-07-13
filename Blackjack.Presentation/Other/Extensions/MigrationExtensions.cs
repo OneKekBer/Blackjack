@@ -5,13 +5,13 @@ namespace Blackjack.Presentation.Other.Extensions;
 
 public static class MigrationExtensions
 {
-    public static void ApplyMigrations(this IApplicationBuilder app)
+    public static async void CreateDatabase(this IApplicationBuilder app)
     {
-        using IServiceScope serviceScope = app.ApplicationServices.CreateScope();
-        
-        using DatabaseContext context = 
+        await using var serviceScope = app.ApplicationServices.CreateAsyncScope();
+
+        DatabaseContext context =
             serviceScope.ServiceProvider.GetRequiredService<DatabaseContext>();
         
-        context.Database.Migrate();
+        await context.Database.MigrateAsync();
     }
 }

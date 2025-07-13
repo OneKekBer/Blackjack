@@ -43,7 +43,5 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 1234
       POSTGRES_DB: blackjack
-    volumes:
-      - "./.containers/postgres:/var/lib/postgresql/data"
     networks:
       - blackjack-deploy
