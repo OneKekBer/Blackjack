@@ -1,11 +1,11 @@
 # Its my pet-project mulitplayer PVPVB blackjack 
 Technology:
-Backend: C#, Asp.Net, Signalr Entity framework, PostgreSQL, Inmemmorycache  
+Backend: C#, Asp.Net, Signalr Entity framework, PostgreSQL, InMemmoryCache  
 Frontend: React, Typescript, Tailwind
 
 # Startup
-If you dont have docker: Downolad docker!
-If you dont have postgres image: type in cmd "docker pull postgres"
+If you dont have docker: Downolad docker! \
+If you dont have postgres image: type in cmd ```docker pull postgres```
 1) ```git clone https://github.com/OneKekBer/Blackjack.git```
 2) in Blackjack dir cmd type: ```docker compose up -d --build```
 3) go to ```http://localhost:8000```
